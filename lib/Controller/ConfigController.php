@@ -116,14 +116,22 @@ class ConfigController extends Controller {
 		$result = $this->zimbraAPIService->login($url, $login, $password);
 		if (isset($result['token'])) {
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'token', $result['token']);
-			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_id', $login);
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_name', $login);
-			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_displayname', $login);
+			// get user info
+			$infoReqResp = $this->zimbraAPIService->soapRequest($this->userId, 'GetInfoRequest', 'urn:zimbraAccount');
+			$userInfo = $infoReqResp['Body']['GetInfoResponse'] ?? [];
+			$zUserId = $userInfo['id'] ?? $login;
+			$zUserName = $userInfo['name'] ?? $login;
+			$zUserDisplayName = $userInfo['attrs']['_attrs']['displayName'] ?? $login;
+			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_id', $zUserId);
+			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_name', $zUserName);
+			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_displayname', $zUserDisplayName);
 			return new DataResponse([
-				'user_id' => $login,
-				'user_name' => $login,
-				'user_displayname' => $login,
-//				'plop' => $this->zimbraAPIService->request($this->userId, 'home/'.$login.'/contacts'),
+				'user_id' => $zUserId,
+				'user_name' => $zUserName,
+				'user_displayname' => $zUserDisplayName,
+//				'plop' => $this->zimbraAPIService->restRequest($this->userId, 'home/'.$login.'/contacts'),
+				'plop' => $this->zimbraAPIService->soapRequest($this->userId, 'GetInfoRequest', 'urn:zimbraAccount'),
 			]);
 		}
 		return new DataResponse([

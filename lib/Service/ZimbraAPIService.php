@@ -15,19 +15,12 @@ use Datetime;
 use Exception;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
-use GuzzleHttp\RequestOptions;
-use OC\Files\Node\File;
-use OC\Files\Node\Folder;
 use OCA\Zimbra\AppInfo\Application;
-use OCP\Constants;
-use OCP\Files\IRootFolder;
+use OCP\App\IAppManager;
 use OCP\IConfig;
 use OCP\IL10N;
-use OCP\IURLGenerator;
-use OCP\Share\IShare;
 use Psr\Log\LoggerInterface;
 use OCP\Http\Client\IClientService;
-use OCP\Share\IManager as ShareManager;
 use Throwable;
 
 class ZimbraAPIService {
@@ -51,9 +44,14 @@ class ZimbraAPIService {
 	 * @var IConfig
 	 */
 	private $config;
-	private IRootFolder $root;
-	private ShareManager $shareManager;
-	private IURLGenerator $urlGenerator;
+	/**
+	 * @var IAppManager
+	 */
+	private $appManager;
+	/**
+	 * @var string
+	 */
+	private $appVersion;
 
 	/**
 	 * Service to make requests to Zimbra API
@@ -62,18 +60,15 @@ class ZimbraAPIService {
 								LoggerInterface $logger,
 								IL10N $l10n,
 								IConfig $config,
-								IRootFolder $root,
-								ShareManager $shareManager,
-								IURLGenerator $urlGenerator,
+								IAppManager $appManager,
 								IClientService $clientService) {
 		$this->appName = $appName;
 		$this->logger = $logger;
 		$this->l10n = $l10n;
 		$this->client = $clientService->newClient();
 		$this->config = $config;
-		$this->root = $root;
-		$this->shareManager = $shareManager;
-		$this->urlGenerator = $urlGenerator;
+		$this->appManager = $appManager;
+		$this->appVersion = $appManager->getAppVersion(Application::APP_ID);
 	}
 
 	/**
@@ -137,8 +132,8 @@ class ZimbraAPIService {
 	 * @return array|mixed|resource|string|string[]
 	 * @throws Exception
 	 */
-	public function request(string $userId, string $endPoint, array $params = [], string $method = 'GET',
-							bool $jsonResponse = true) {
+	public function restRequest(string $userId, string $endPoint, array $params = [], string $method = 'GET',
+								bool $jsonResponse = true) {
 		$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
 		$this->checkTokenExpiration($userId, $url);
@@ -195,6 +190,55 @@ class ZimbraAPIService {
 			} else {
 				return ['error' => $this->l10n->t('Bad HTTP method')];
 			}
+			$body = $response->getBody();
+			$respCode = $response->getStatusCode();
+
+			if ($respCode >= 400) {
+				return ['error' => $this->l10n->t('Bad credentials')];
+			} else {
+				if ($jsonResponse) {
+					return json_decode($body, true);
+				} else {
+					return $body;
+				}
+			}
+		} catch (ServerException | ClientException $e) {
+			$this->logger->debug('Zimbra API error : '.$e->getMessage(), ['app' => $this->appName]);
+			return ['error' => $e->getMessage()];
+		}
+	}
+
+	/**
+	 * @param string $userId
+	 * @param string $endPoint
+	 * @param array $params
+	 * @param string $method
+	 * @param bool $jsonResponse
+	 * @return array|mixed|resource|string|string[]
+	 * @throws Exception
+	 */
+	public function soapRequest(string $userId, string $function, string $ns, array $params = [],
+							bool $jsonResponse = true) {
+		$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
+		$this->checkTokenExpiration($userId, $url);
+		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+		$zimbraUserName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
+		try {
+			$url = $url . '/service/soap';
+			$options = [
+				'headers' => [
+					'User-Agent'  => Application::INTEGRATION_USER_AGENT,
+					'Content-Type' => 'application/json',
+				],
+			];
+
+			$bodyArray = [
+				'Header' => $this->getRequestHeader($zimbraUserName, $accessToken),
+				'Body' => $this->getRequestBody($function, $ns, $params),
+			];
+			$options['body'] = json_encode($bodyArray);
+			$response = $this->client->post($url, $options);
 			$body = $response->getBody();
 			$respCode = $response->getStatusCode();
 
@@ -343,25 +387,14 @@ class ZimbraAPIService {
 				],
 			];
 			$bodyArray = [
-				'Header' => [
-					'context' => [
-						'_jsns' =>'urn:zimbra',
-						'userAgent' => [
-							'name' =>'curl',
-							'version' =>'7.54.0',
-						],
+				'Header' => $this->getLoginRequestHeader(),
+				'Body' => $this->getRequestBody('AuthRequest', 'urn:zimbraAccount', [
+					'account' => [
+						'_content' => $login,
+						'by' => 'name',
 					],
-				],
-				'Body' => [
-					'AuthRequest' => [
-						'_jsns' => 'urn:zimbraAccount',
-						'account' => [
-							'_content' => $login,
-							'by' => 'name',
-						],
-						'password' => $password,
-					],
-				],
+					'password' => $password,
+				]),
 			];
 			$options['body'] = json_encode($bodyArray);
 			$response = $this->client->post($url, $options);
@@ -394,5 +427,44 @@ class ZimbraAPIService {
 			$this->logger->warning('Zimbra login error : '.$e->getMessage(), ['app' => Application::APP_ID]);
 			return ['error' => $e->getMessage()];
 		}
+	}
+
+	private function getRequestHeader(string $login, string $token): array {
+		return [
+			'context' => [
+				'_jsns' => 'urn:zimbra',
+				'userAgent' => [
+					'name' => Application::INTEGRATION_USER_AGENT,
+					'version' => $this->appVersion,
+				],
+				'authTokenControl' => [
+					'voidOnExpired' => true,
+				],
+				'account' => [
+					'_content' => $login,
+					'by' => 'name'
+				],
+				'authToken' => $token,
+			]
+		];
+	}
+
+	private function getLoginRequestHeader(): array {
+		return [
+			'context' => [
+				'_jsns' =>'urn:zimbra',
+				'userAgent' => [
+					'name' => Application::INTEGRATION_USER_AGENT,
+					'version' => $this->appVersion,
+				],
+			]
+		];
+	}
+
+	private function getRequestBody(string $function, string $ns, array $params): array {
+		$nsArray = ['_jsns' => $ns];
+		return [
+			$function => array_merge($nsArray, $params)
+		];
 	}
 }
