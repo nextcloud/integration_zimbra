@@ -18,7 +18,8 @@ return [
 		['name' => 'config#popupSuccessPage', 'url' => '/popup-success', 'verb' => 'GET'],
 
 		['name' => 'zimbraAPI#getContacts', 'url' => '/contacts', 'verb' => 'GET'],
-		['name' => 'zimbraAPI#getNotifications', 'url' => '/notifications', 'verb' => 'GET'],
+		['name' => 'zimbraAPI#getUpcomingEvents', 'url' => '/upcoming-events', 'verb' => 'GET'],
+		['name' => 'zimbraAPI#getUnreadEmails', 'url' => '/unread-emails', 'verb' => 'GET'],
         ['name' => 'zimbraAPI#getUserAvatar', 'url' => '/users/{userId}/image', 'verb' => 'GET'],
 
 		['name' => 'files#getFileImage', 'url' => '/preview', 'verb' => 'GET'],

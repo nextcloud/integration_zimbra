@@ -87,9 +87,44 @@ class ZimbraAPIController extends Controller {
 	/**
 	 * @return DataResponse
 	 */
-	public function getNotifications(?int $since = null) {
+	public function getContacts() {
 		$zimbraUserName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name');
-		$result = ['error' => 'NYI'];
+		if ($zimbraUserName === '') {
+			return new DataResponse('not connected', Http::STATUS_BAD_REQUEST);
+		}
+		$result = $this->zimbraAPIService->getContacts($this->userId);
+		if (isset($result['error'])) {
+			return new DataResponse($result['error'], Http::STATUS_BAD_REQUEST);
+		} else {
+			return new DataResponse($result);
+		}
+	}
+
+	/**
+	 * @return DataResponse
+	 */
+	public function getUnreadEmails(int $offset = 0, int $limit = 10) {
+		$zimbraUserName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name');
+		if ($zimbraUserName === '') {
+			return new DataResponse('not connected', Http::STATUS_BAD_REQUEST);
+		}
+		$result = $this->zimbraAPIService->getUnreadEmails($this->userId, $offset, $limit);
+		if (isset($result['error'])) {
+			return new DataResponse($result['error'], Http::STATUS_BAD_REQUEST);
+		} else {
+			return new DataResponse($result);
+		}
+	}
+
+	/**
+	 * @return DataResponse
+	 */
+	public function getUpcomingEvents() {
+		$zimbraUserName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name');
+		if ($zimbraUserName === '') {
+			return new DataResponse('not connected', Http::STATUS_BAD_REQUEST);
+		}
+		$result = $this->zimbraAPIService->getUpcomingEvents($this->userId);
 		if (isset($result['error'])) {
 			return new DataResponse($result['error'], Http::STATUS_BAD_REQUEST);
 		} else {

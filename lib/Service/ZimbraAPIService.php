@@ -73,33 +73,51 @@ class ZimbraAPIService {
 
 	/**
 	 * @param string $userId
-	 * @param string $zimbraUrl
-	 * @param string $term
+	 * @return array|string[]
+	 * @throws Exception
+	 */
+	public function getContacts(string $userId): array {
+		$zimbraUserName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
+		return $this->restRequest($userId, 'home/' . $zimbraUserName . '/contacts');
+	}
+
+	/**
+	 * @param string $userId
+	 * @return array|string[]
+	 * @throws Exception
+	 */
+	public function getUpcomingEvents(string $userId): array {
+		$zimbraUserName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
+		$nowMilliTs = (new DateTime())->getTimestamp() * 1000;
+		$params = [
+			'start' => $nowMilliTs,
+			// now + 30 days
+			'end' => $nowMilliTs + (60 * 60 * 24 * 30 * 1000),
+		];
+		return $this->restRequest($userId, 'home/' . $zimbraUserName . '/calendar', $params);
+	}
+
+	/**
+	 * @param string $userId
 	 * @param int $offset
 	 * @param int $limit
 	 * @return array
 	 * @throws Exception
 	 */
-	public function searchMail(string $userId, string $zimbraUrl, string $term, int $offset = 0, int $limit = 5): array {
+	public function getUnreadEmails(string $userId, int $offset = 0, int $limit = 10): array {
+		$zimbraUserName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
 		$params = [
-			'include_deleted_channels' => true,
-			'is_or_search' => true,
-			'page' => 0,
-			'per_page' => 60,
-			'terms' => $term,
-			'time_zone_offset' => 7200,
+			'query' => 'is:unread',
 		];
-		$result = $this->request($userId, $zimbraUrl, 'posts/search', $params, 'POST');
-		$posts = $result['posts'] ?? [];
+		$result = $this->restRequest($userId, 'home/' . $zimbraUserName . '/inbox', $params);
+		$emails = $result['m'] ?? [];
 
-		// sort post by creation date, DESC
-		usort($posts, function($a, $b) {
-			$ta = (int) $a['create_at'];
-			$tb = (int) $b['create_at'];
-			return ($ta > $tb) ? -1 : 1;
+		// sort emails by date, DESC, recents first
+		usort($emails, function($a, $b) {
+			return ($a['d'] > $b['d']) ? -1 : 1;
 		});
 
-		return array_slice($posts, $offset, $limit);
+		return array_slice($emails, $offset, $limit);
 	}
 
 	/**

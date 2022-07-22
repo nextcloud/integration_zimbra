@@ -130,8 +130,10 @@ class ConfigController extends Controller {
 				'user_id' => $zUserId,
 				'user_name' => $zUserName,
 				'user_displayname' => $zUserDisplayName,
-//				'plop' => $this->zimbraAPIService->restRequest($this->userId, 'home/'.$login.'/contacts'),
-				'plop' => $this->zimbraAPIService->soapRequest($this->userId, 'GetInfoRequest', 'urn:zimbraAccount'),
+//				'contacts' => $this->zimbraAPIService->getContacts($this->userId),
+//				'events' => $this->zimbraAPIService->getUpcomingEvents($this->userId),
+//				'mail' => $this->zimbraAPIService->getUnreadEmails($this->userId),
+//				'GetInfoRequest' => $this->zimbraAPIService->soapRequest($this->userId, 'GetInfoRequest', 'urn:zimbraAccount'),
 			]);
 		}
 		return new DataResponse([
