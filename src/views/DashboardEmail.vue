@@ -47,7 +47,7 @@ import Button from '@nextcloud/vue/dist/Components/Button'
 import { oauthConnect, oauthConnectConfirmDialog } from '../utils'
 
 export default {
-	name: 'Dashboard',
+	name: 'DashboardEmail',
 
 	components: {
 		DashboardWidget,
@@ -65,11 +65,11 @@ export default {
 
 	data() {
 		return {
-			notifications: [],
+			emails: [],
 			loop: null,
 			widgetState: 'loading',
 			settingsUrl: generateUrl('/settings/user/connected-accounts#zimbra_prefs'),
-			initialState: loadState('integration_zimbra', 'user-config'),
+			initialState: loadState('integration_zimbra', 'zimbra-email-config'),
 			windowVisibility: true,
 		}
 	},
@@ -82,25 +82,25 @@ export default {
 			return this.zimbraUrl
 		},
 		items() {
-			return this.notifications.map((n) => {
+			return this.emails.map((email) => {
 				return {
-					id: this.getUniqueKey(n),
-					targetUrl: this.getNotificationTarget(n),
-					avatarUrl: this.getNotificationImage(n),
-					// avatarUsername: this.getRepositoryName(n),
+					id: this.getUniqueKey(email),
+					targetUrl: this.getEmailTarget(email),
+					avatarUrl: this.getAvatarImage(email),
+					// avatarUsername: this.getAvatarName(email),
 					avatarIsNoUser: true,
-					overlayIconUrl: this.getNotificationTypeImage(n),
-					mainText: this.getTargetTitle(n),
-					subText: this.getSubline(n),
+					overlayIconUrl: this.getOverlayImage(email),
+					mainText: this.getMainText(email),
+					subText: this.getSubline(email),
 				}
 			})
 		},
-		lastDate() {
-			const nbNotif = this.notifications.length
-			return (nbNotif > 0) ? this.notifications[0].create_at : null
+		lastTimestamp() {
+			const nbEmail = this.emails.length
+			return (nbEmail > 0) ? (this.emails[0].d / 1000) : null
 		},
 		lastMoment() {
-			return moment(this.lastDate)
+			return moment(this.lastTimestamp)
 		},
 		emptyContentMessage() {
 			if (this.widgetState === 'no-token') {
@@ -108,7 +108,7 @@ export default {
 			} else if (this.widgetState === 'error') {
 				return t('integration_zimbra', 'Error connecting to Zimbra')
 			} else if (this.widgetState === 'ok') {
-				return t('integration_zimbra', 'No Zimbra notifications!')
+				return t('integration_zimbra', 'No Zimbra unread email!')
 			}
 			return ''
 		},
@@ -169,25 +169,25 @@ export default {
 			clearInterval(this.loop)
 		},
 		async launchLoop() {
-			this.fetchNotifications()
-			this.loop = setInterval(() => this.fetchNotifications(), 60000)
+			this.fetchEmails()
+			this.loop = setInterval(() => this.fetchEmails(), 60000)
 		},
-		fetchNotifications() {
+		fetchEmails() {
 			const req = {}
-			if (this.lastDate) {
+			if (this.lastTimestamp) {
 				req.params = {
-					since: this.lastDate,
+					since: this.lastTimestamp,
 				}
 			}
-			axios.get(generateUrl('/apps/integration_zimbra/notifications'), req).then((response) => {
-				this.processNotifications(response.data)
+			axios.get(generateUrl('/apps/integration_zimbra/unread-emails'), req).then((response) => {
+				this.processEmails(response.data)
 				this.widgetState = 'ok'
 			}).catch((error) => {
 				clearInterval(this.loop)
 				if (error.response && error.response.status === 400) {
 					this.widgetState = 'no-token'
 				} else if (error.response && error.response.status === 401) {
-					showError(t('integration_zimbra', 'Failed to get Zimbra notifications'))
+					showError(t('integration_zimbra', 'Failed to get Zimbra emails'))
 					this.widgetState = 'error'
 				} else {
 					// there was an error in notif processing
@@ -195,53 +195,52 @@ export default {
 				}
 			})
 		},
-		processNotifications(newNotifications) {
+		processEmails(newEmails) {
 			if (this.lastDate) {
 				// just add those which are more recent than our most recent one
 				let i = 0
-				while (i < newNotifications.length && this.lastDate < newNotifications[i].create_at) {
+				while (i < newEmails.length && this.lastTimestamp < (newEmails[i].d / 1000)) {
 					i++
 				}
 				if (i > 0) {
-					const toAdd = this.filter(newNotifications.slice(0, i))
-					this.notifications = toAdd.concat(this.notifications)
+					const toAdd = this.filter(newEmails.slice(0, i))
+					this.emails = toAdd.concat(this.emails)
 				}
 			} else {
 				// first time we don't check the date
-				this.notifications = this.filter(newNotifications)
+				this.emails = this.filter(newEmails)
 			}
 		},
-		filter(notifications) {
+		filter(email) {
+			/*
 			return notifications.filter((n) => {
 				return true
 			})
+			*/
+			return emails
 		},
-		getNotificationTarget(n) {
-			return this.zimbraUrl + '/' + n.team_name + '/channels/' + n.channel_name
+		getEmailTarget(email) {
+			return this.zimbraUrl + '/modern/email/Inbox/conversation/' + email.cid
 		},
-		getUniqueKey(n) {
-			return n.id + ':' + n.create_at
+		getAvatarName(email) {
+			return email.e[email.e.length - 1].d
 		},
-		getNotificationImage(n) {
-			return generateUrl('/apps/integration_zimbra/users/{userId}/image', { userId: n.user_id })
+		getAvatarImage(email) {
+			return imagePath('core', 'mail.svg')
 		},
-		getRepositoryName(n) {
-			return n.project.path
-				? n.project.path
-				: ''
-		},
-		getNotificationTypeImage(n) {
+		getOverlayImage(email) {
 			return imagePath('integration_zimbra', 'mention.svg')
 		},
-		getSubline(n) {
-			return t('integration_zimbra', '{name} in #{channel} at {date}', { name: n.user_name, channel: n.channel_name, date: this.getFormattedDate(n) })
+		getMainText(email) {
+			return email.su
 		},
-		getTargetTitle(n) {
-			return n.message
+		getSubline(email) {
+			return email.email.e[0].a + ' ' + this.getFormattedDate(email)
 		},
-		getFormattedDate(n) {
-			return moment(n.create_at).format('LLL')
+		getFormattedDate(email) {
+			return moment(n.d / 1000).format('LLL')
 		},
+		/*
 		editTodo(id, action) {
 			axios.put(generateUrl('/apps/integration_zimbra/todos/' + id + '/' + action)).then((response) => {
 			}).catch((error) => {
@@ -249,6 +248,7 @@ export default {
 				console.debug(error)
 			})
 		},
+		*/
 	},
 }
 </script>

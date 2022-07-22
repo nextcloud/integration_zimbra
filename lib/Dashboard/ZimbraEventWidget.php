@@ -32,7 +32,7 @@ use OCP\Util;
 
 use OCA\Zimbra\AppInfo\Application;
 
-class ZimbraWidget implements IWidget {
+class ZimbraEventWidget implements IWidget {
 
 	/** @var IL10N */
 	private $l10n;
@@ -40,9 +40,18 @@ class ZimbraWidget implements IWidget {
 	 * @var IURLGenerator
 	 */
 	private $url;
-	private IInitialState $initialStateService;
-	private IConfig $config;
-	private ?string $userId;
+	/**
+	 * @var IConfig
+	 */
+	private $config;
+	/**
+	 * @var IInitialState
+	 */
+	private $initialStateService;
+	/**
+	 * @var string|null
+	 */
+	private $userId;
 
 	public function __construct(IL10N         $l10n,
 								IConfig       $config,
@@ -51,8 +60,8 @@ class ZimbraWidget implements IWidget {
 								?string       $userId) {
 		$this->l10n = $l10n;
 		$this->url = $url;
-		$this->initialStateService = $initialStateService;
 		$this->config = $config;
+		$this->initialStateService = $initialStateService;
 		$this->userId = $userId;
 	}
 
@@ -60,14 +69,14 @@ class ZimbraWidget implements IWidget {
 	 * @inheritDoc
 	 */
 	public function getId(): string {
-		return 'zimbra_notifications';
+		return 'zimbra_event';
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function getTitle(): string {
-		return $this->l10n->t('Zimbra');
+		return $this->l10n->t('Zimbra upcoming events');
 		}
 
 	/**
@@ -108,8 +117,8 @@ class ZimbraWidget implements IWidget {
 			'url' => $userZimbraUrl,
 			'client_id' => $clientID,
 		];
-		$this->initialStateService->provideInitialState('user-config', $userConfig);
-		Util::addScript(Application::APP_ID, Application::APP_ID . '-dashboard');
+		$this->initialStateService->provideInitialState('zimbra-event-config', $userConfig);
+		Util::addScript(Application::APP_ID, Application::APP_ID . '-dashboardEvent');
 		Util::addStyle(Application::APP_ID, 'dashboard');
 	}
 }

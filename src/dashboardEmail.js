@@ -13,11 +13,11 @@
 
 import Vue from 'vue'
 import './bootstrap'
-import Dashboard from './views/Dashboard'
+import DashboardEmail from './views/DashboardEmail'
 
 document.addEventListener('DOMContentLoaded', function() {
 
-	OCA.Dashboard.register('zimbra_notifications', (el, { widget }) => {
+	OCA.Dashboard.register('zimbra_email', (el, { widget }) => {
 		const View = Vue.extend(Dashboard)
 		new View({
 			propsData: { title: widget.title },
