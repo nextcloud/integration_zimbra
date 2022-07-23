@@ -89,7 +89,7 @@ export default {
 					avatarUrl: this.getAvatarImage(email),
 					// avatarUsername: this.getAvatarName(email),
 					avatarIsNoUser: true,
-					overlayIconUrl: this.getOverlayImage(email),
+					// overlayIconUrl: this.getOverlayImage(email),
 					mainText: this.getMainText(email),
 					subText: this.getSubline(email),
 				}
@@ -100,7 +100,7 @@ export default {
 			return (nbEmail > 0) ? (this.emails[0].d / 1000) : null
 		},
 		lastMoment() {
-			return moment(this.lastTimestamp)
+			return moment.unix(this.lastTimestamp)
 		},
 		emptyContentMessage() {
 			if (this.widgetState === 'no-token') {
@@ -173,13 +173,8 @@ export default {
 			this.loop = setInterval(() => this.fetchEmails(), 60000)
 		},
 		fetchEmails() {
-			const req = {}
-			if (this.lastTimestamp) {
-				req.params = {
-					since: this.lastTimestamp,
-				}
-			}
-			axios.get(generateUrl('/apps/integration_zimbra/unread-emails'), req).then((response) => {
+			// always get all unread emails in case some new ones appeared in the middle of the ones we already have
+			axios.get(generateUrl('/apps/integration_zimbra/unread-emails')).then((response) => {
 				this.processEmails(response.data)
 				this.widgetState = 'ok'
 			}).catch((error) => {
@@ -190,34 +185,24 @@ export default {
 					showError(t('integration_zimbra', 'Failed to get Zimbra emails'))
 					this.widgetState = 'error'
 				} else {
-					// there was an error in notif processing
+					// there was an error in email processing
 					console.debug(error)
 				}
 			})
 		},
 		processEmails(newEmails) {
-			if (this.lastDate) {
-				// just add those which are more recent than our most recent one
-				let i = 0
-				while (i < newEmails.length && this.lastTimestamp < (newEmails[i].d / 1000)) {
-					i++
-				}
-				if (i > 0) {
-					const toAdd = this.filter(newEmails.slice(0, i))
-					this.emails = toAdd.concat(this.emails)
-				}
-			} else {
-				// first time we don't check the date
-				this.emails = this.filter(newEmails)
-			}
+			this.emails = this.filter(newEmails)
 		},
-		filter(email) {
+		filter(emails) {
 			/*
-			return notifications.filter((n) => {
+			return emails.filter((n) => {
 				return true
 			})
 			*/
 			return emails
+		},
+		getUniqueKey(email) {
+			return email.id
 		},
 		getEmailTarget(email) {
 			return this.zimbraUrl + '/modern/email/Inbox/conversation/' + email.cid
@@ -235,10 +220,10 @@ export default {
 			return email.su
 		},
 		getSubline(email) {
-			return email.email.e[0].a + ' ' + this.getFormattedDate(email)
+			return email.e[0].a + ' ' + this.getFormattedDate(email)
 		},
 		getFormattedDate(email) {
-			return moment(n.d / 1000).format('LLL')
+			return moment.unix(email.d / 1000).format('LLL')
 		},
 		/*
 		editTodo(id, action) {
@@ -254,7 +239,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-::v-deep .connect-button {
+:deep(.connect-button) {
 	margin-top: 10px;
 }
 </style>

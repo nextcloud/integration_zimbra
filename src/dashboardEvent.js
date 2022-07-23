@@ -18,7 +18,7 @@ import DashboardEvent from './views/DashboardEvent'
 document.addEventListener('DOMContentLoaded', function() {
 
 	OCA.Dashboard.register('zimbra_event', (el, { widget }) => {
-		const View = Vue.extend(Dashboard)
+		const View = Vue.extend(DashboardEvent)
 		new View({
 			propsData: { title: widget.title },
 		}).$mount(el)

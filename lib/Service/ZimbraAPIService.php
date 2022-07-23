@@ -86,15 +86,23 @@ class ZimbraAPIService {
 	 * @return array|string[]
 	 * @throws Exception
 	 */
-	public function getUpcomingEvents(string $userId): array {
+	public function getUpcomingEvents(string $userId, ?int $sinceTs = null): array {
 		$zimbraUserName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
-		$nowMilliTs = (new DateTime())->getTimestamp() * 1000;
+		if ($sinceTs === null) {
+			$sinceMilliTs = (new DateTime())->getTimestamp() * 1000;
+		} else {
+			$sinceMilliTs = $sinceTs * 1000;
+		}
 		$params = [
-			'start' => $nowMilliTs,
-			// now + 30 days
-			'end' => $nowMilliTs + (60 * 60 * 24 * 30 * 1000),
+			'start' => $sinceMilliTs,
+			// start + 30 days
+			'end' => $sinceMilliTs + (60 * 60 * 24 * 30 * 1000),
 		];
-		return $this->restRequest($userId, 'home/' . $zimbraUserName . '/calendar', $params);
+		$result = $this->restRequest($userId, 'home/' . $zimbraUserName . '/calendar', $params);
+		if (isset($result['appt'])) {
+			return $result['appt'];
+		}
+		return $result;
 	}
 
 	/**

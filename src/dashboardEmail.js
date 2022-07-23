@@ -18,7 +18,7 @@ import DashboardEmail from './views/DashboardEmail'
 document.addEventListener('DOMContentLoaded', function() {
 
 	OCA.Dashboard.register('zimbra_email', (el, { widget }) => {
-		const View = Vue.extend(Dashboard)
+		const View = Vue.extend(DashboardEmail)
 		new View({
 			propsData: { title: widget.title },
 		}).$mount(el)

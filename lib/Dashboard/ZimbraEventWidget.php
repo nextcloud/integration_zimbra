@@ -76,7 +76,7 @@ class ZimbraEventWidget implements IWidget {
 	 * @inheritDoc
 	 */
 	public function getTitle(): string {
-		return $this->l10n->t('Zimbra upcoming events');
+		return $this->l10n->t('Zimbra events');
 		}
 
 	/**

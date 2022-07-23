@@ -82,14 +82,14 @@ export default {
 			return this.zimbraUrl + '/calendar'
 		},
 		items() {
-			return this.notifications.map((event) => {
+			return this.events.map((event) => {
 				return {
 					id: this.getUniqueKey(event),
 					targetUrl: this.getEventTarget(event),
 					avatarUrl: this.getAvatarImage(event),
 					// avatarUsername: this.getRepositoryName(event),
 					avatarIsNoUser: true,
-					overlayIconUrl: this.getOverlayImage(event),
+					// overlayIconUrl: this.getOverlayImage(event),
 					mainText: this.getMainText(event),
 					subText: this.getSubText(event),
 				}
@@ -97,10 +97,10 @@ export default {
 		},
 		lastTimestamp() {
 			const nbEvent = this.events.length
-			return (nbEvent > 0) ? this.events[0]. : null
+			return (nbEvent > 0) ? (this.events[0].inv[0]?.comp[0]?.s[0]?.u / 1000) : null
 		},
 		lastMoment() {
-			return moment(this.lastDate)
+			return moment.unix(this.lastTimestamp)
 		},
 		emptyContentMessage() {
 			if (this.widgetState === 'no-token') {
@@ -108,7 +108,7 @@ export default {
 			} else if (this.widgetState === 'error') {
 				return t('integration_zimbra', 'Error connecting to Zimbra')
 			} else if (this.widgetState === 'ok') {
-				return t('integration_zimbra', 'No Zimbra notifications!')
+				return t('integration_zimbra', 'No Zimbra upcoming events!')
 			}
 			return ''
 		},
@@ -169,25 +169,20 @@ export default {
 			clearInterval(this.loop)
 		},
 		async launchLoop() {
-			this.fetchNotifications()
-			this.loop = setInterval(() => this.fetchNotifications(), 60000)
+			this.fetchEvents()
+			this.loop = setInterval(() => this.fetchEvents(), 60000)
 		},
-		fetchNotifications() {
-			const req = {}
-			if (this.lastDate) {
-				req.params = {
-					since: this.lastDate,
-				}
-			}
-			axios.get(generateUrl('/apps/integration_zimbra/notifications'), req).then((response) => {
-				this.processNotifications(response.data)
+		fetchEvents() {
+			// always get all events in case there are some new ones in the middle of the ones we know
+			axios.get(generateUrl('/apps/integration_zimbra/upcoming-events')).then((response) => {
+				this.processEvents(response.data)
 				this.widgetState = 'ok'
 			}).catch((error) => {
 				clearInterval(this.loop)
 				if (error.response && error.response.status === 400) {
 					this.widgetState = 'no-token'
 				} else if (error.response && error.response.status === 401) {
-					showError(t('integration_zimbra', 'Failed to get Zimbra notifications'))
+					showError(t('integration_zimbra', 'Failed to get Zimbra upcoming events'))
 					this.widgetState = 'error'
 				} else {
 					// there was an error in notif processing
@@ -195,66 +190,39 @@ export default {
 				}
 			})
 		},
-		processNotifications(newNotifications) {
-			if (this.lastDate) {
-				// just add those which are more recent than our most recent one
-				let i = 0
-				while (i < newNotifications.length && this.lastDate < newNotifications[i].create_at) {
-					i++
-				}
-				if (i > 0) {
-					const toAdd = this.filter(newNotifications.slice(0, i))
-					this.notifications = toAdd.concat(this.notifications)
-				}
-			} else {
-				// first time we don't check the date
-				this.notifications = this.filter(newNotifications)
-			}
+		processEvents(newEvents) {
+			this.events = this.filter(newEvents)
 		},
-		filter(notifications) {
-			return notifications.filter((n) => {
-				return true
-			})
+		filter(events) {
+			return events
 		},
-		getNotificationTarget(n) {
-			return this.zimbraUrl + '/' + n.team_name + '/channels/' + n.channel_name
+		getUniqueKey(event) {
+			return event.id + ':' + event.inv[0]?.comp[0]?.s[0]?.u
 		},
-		getUniqueKey(n) {
-			return n.id + ':' + n.create_at
+		getEventTarget(event) {
+			return this.showMoreUrl
 		},
-		getNotificationImage(n) {
-			return generateUrl('/apps/integration_zimbra/users/{userId}/image', { userId: n.user_id })
+		getAvatarImage(event) {
+			return imagePath('core', 'places/calendar.svg')
 		},
-		getRepositoryName(n) {
-			return n.project.path
-				? n.project.path
-				: ''
-		},
-		getNotificationTypeImage(n) {
+		getOverlayImage(event) {
 			return imagePath('integration_zimbra', 'mention.svg')
 		},
-		getSubline(n) {
-			return t('integration_zimbra', '{name} in #{channel} at {date}', { name: n.user_name, channel: n.channel_name, date: this.getFormattedDate(n) })
+		getSubText(event) {
+			return this.getFormattedDate(event)
 		},
-		getTargetTitle(n) {
-			return n.message
+		getMainText(event) {
+			return event.inv[0]?.comp[0]?.name
 		},
-		getFormattedDate(n) {
-			return moment(n.create_at).format('LLL')
-		},
-		editTodo(id, action) {
-			axios.put(generateUrl('/apps/integration_zimbra/todos/' + id + '/' + action)).then((response) => {
-			}).catch((error) => {
-				showError(t('integration_zimbra', 'Failed to edit Zimbra todo'))
-				console.debug(error)
-			})
+		getFormattedDate(event) {
+			return moment.unix(event.inv[0]?.comp[0]?.s[0]?.u / 1000).format('LLL')
 		},
 	},
 }
 </script>
 
 <style scoped lang="scss">
-::v-deep .connect-button {
+:deep(.connect-button) {
 	margin-top: 10px;
 }
 </style>

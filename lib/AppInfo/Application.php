@@ -13,6 +13,8 @@ use Closure;
 use OCA\DAV\Events\CalendarObjectCreatedEvent;
 use OCA\DAV\Events\CalendarObjectUpdatedEvent;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
+use OCA\Zimbra\Dashboard\ZimbraEmailWidget;
+use OCA\Zimbra\Dashboard\ZimbraEventWidget;
 use OCA\Zimbra\Listener\CalendarObjectCreatedListener;
 use OCA\Zimbra\Listener\CalendarObjectUpdatedListener;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -58,7 +60,8 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function register(IRegistrationContext $context): void {
-		$context->registerDashboardWidget(ZimbraWidget::class);
+		$context->registerDashboardWidget(ZimbraEventWidget::class);
+		$context->registerDashboardWidget(ZimbraEmailWidget::class);
 		$context->registerSearchProvider(ZimbraSearchMailProvider::class);
 	}
 

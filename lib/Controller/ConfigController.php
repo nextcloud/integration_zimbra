@@ -131,7 +131,7 @@ class ConfigController extends Controller {
 				'user_name' => $zUserName,
 				'user_displayname' => $zUserDisplayName,
 //				'contacts' => $this->zimbraAPIService->getContacts($this->userId),
-//				'events' => $this->zimbraAPIService->getUpcomingEvents($this->userId),
+				'events' => $this->zimbraAPIService->getUpcomingEvents($this->userId),
 //				'mail' => $this->zimbraAPIService->getUnreadEmails($this->userId),
 //				'GetInfoRequest' => $this->zimbraAPIService->soapRequest($this->userId, 'GetInfoRequest', 'urn:zimbraAccount'),
 			]);
