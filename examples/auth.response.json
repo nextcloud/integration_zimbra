@@ -1,0 +1,27 @@
+{
+  "Header": {
+    "context": {
+      "change": {
+        "token": 621
+      },
+      "_jsns": "urn:zimbra"
+    }
+  },
+  "Body": {
+    "AuthResponse": {
+      "authToken": [
+        {
+          "_content": "0_11ad7b2463ada01546d8c2bd9e7e690d18edfbe4_69643d33363a37663330626564392d643431332d343735322d613961652d6432396237373836326333383b6578703d31333a313635383635363230383739353b747970653d363a7a696d6272613b753d313a613b7469643d31303a313235373037303534333b76657273696f6e3d31333a392e302e305f47415f343137383b"
+        }
+      ],
+      "lifetime": 172799999,
+      "skin": [
+        {
+          "_content": "harmony"
+        }
+      ],
+      "_jsns": "urn:zimbraAccount"
+    }
+  },
+  "_jsns": "urn:zimbraSoap"
+}
