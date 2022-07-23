@@ -3,6 +3,22 @@
 		:show-more-url="showMoreUrl"
 		:show-more-text="title"
 		:loading="widgetState === 'loading'">
+		<template #default="{item}">
+			<DashboardWidgetItem
+				:id="item.id"
+				:target-url="item.targetUrl"
+				:avatar-is-no-user="item.avatarIsNoUser"
+				:main-text="item.mainText"
+				:sub-text="item.subText">
+				<template #avatar>
+					<Avatar icon-class="icon-calendar">
+						<!-- FOR NEW @NC/VUE template #icon>
+							<CalendarIcon />
+						</template-->
+					</Avatar>
+				</template>
+			</DashboardWidgetItem>
+		</template>
 		<template #empty-content>
 			<EmptyContent
 				v-if="emptyContentMessage"
@@ -36,13 +52,15 @@
 <script>
 import axios from '@nextcloud/axios'
 import { generateUrl, imagePath } from '@nextcloud/router'
-import { DashboardWidget } from '@nextcloud/vue-dashboard'
+import { DashboardWidget, DashboardWidgetItem } from '@nextcloud/vue-dashboard'
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import moment from '@nextcloud/moment'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import LoginVariantIcon from 'vue-material-design-icons/LoginVariant'
 import Button from '@nextcloud/vue/dist/Components/Button'
+import Avatar from '@nextcloud/vue/dist/Components/Avatar'
+// import CalendarIcon from 'vue-material-design-icons/Calendar'
 
 import { oauthConnect, oauthConnectConfirmDialog } from '../utils'
 
@@ -51,9 +69,12 @@ export default {
 
 	components: {
 		DashboardWidget,
+		DashboardWidgetItem,
 		EmptyContent,
 		Button,
+		Avatar,
 		LoginVariantIcon,
+		// CalendarIcon,
 	},
 
 	props: {
