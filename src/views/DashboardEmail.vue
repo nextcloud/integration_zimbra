@@ -3,6 +3,26 @@
 		:show-more-url="showMoreUrl"
 		:show-more-text="title"
 		:loading="widgetState === 'loading'">
+		<template #default="{item}">
+			<DashboardWidgetItem
+				:id="item.id"
+				:target-url="item.targetUrl"
+				:avatar-url="item.avatarUrl"
+				:avatar-username="item.avatarUsername"
+				:avatar-is-no-user="item.avatarIsNoUser"
+				:overlay-icon-url="item.overlayIconUrl"
+				:main-text="item.mainText"
+				:sub-text="item.subText">
+				<template #avatar>
+					<Avatar :size="44"
+						icon-class="icon-mail-dark icon-mail-fff">
+						<!-- FOR NEW @NC/VUE template #icon>
+							<MailIcon />
+						</template-->
+					</Avatar>
+				</template>
+			</DashboardWidgetItem>
+		</template>
 		<template #empty-content>
 			<EmptyContent
 				v-if="emptyContentMessage"
@@ -36,13 +56,15 @@
 <script>
 import axios from '@nextcloud/axios'
 import { generateUrl, imagePath } from '@nextcloud/router'
-import { DashboardWidget } from '@nextcloud/vue-dashboard'
+import { DashboardWidget, DashboardWidgetItem } from '@nextcloud/vue-dashboard'
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import moment from '@nextcloud/moment'
 import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import LoginVariantIcon from 'vue-material-design-icons/LoginVariant'
 import Button from '@nextcloud/vue/dist/Components/Button'
+import Avatar from '@nextcloud/vue/dist/Components/Avatar'
+// import MailIcon from 'vue-material-design-icons/Mail'
 
 import { oauthConnect, oauthConnectConfirmDialog } from '../utils'
 
@@ -51,9 +73,12 @@ export default {
 
 	components: {
 		DashboardWidget,
+		DashboardWidgetItem,
 		EmptyContent,
 		Button,
 		LoginVariantIcon,
+		Avatar,
+		// MailIcon,
 	},
 
 	props: {
@@ -86,7 +111,7 @@ export default {
 				return {
 					id: this.getUniqueKey(email),
 					targetUrl: this.getEmailTarget(email),
-					avatarUrl: this.getAvatarImage(email),
+					// avatarUrl: this.getAvatarImage(email),
 					// avatarUsername: this.getAvatarName(email),
 					avatarIsNoUser: true,
 					// overlayIconUrl: this.getOverlayImage(email),
