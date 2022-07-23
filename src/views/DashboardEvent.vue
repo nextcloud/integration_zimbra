@@ -12,7 +12,7 @@
 				:sub-text="item.subText">
 				<template #avatar>
 					<Avatar :size="44"
-						icon-class="icon-calendar">
+						icon-class="icon-calendar-dark icon-calendar-fff">
 						<!-- FOR NEW @NC/VUE template #icon>
 							<CalendarIcon />
 						</template-->
