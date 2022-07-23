@@ -11,7 +11,8 @@
 				:main-text="item.mainText"
 				:sub-text="item.subText">
 				<template #avatar>
-					<Avatar icon-class="icon-calendar">
+					<Avatar :size="44"
+						icon-class="icon-calendar">
 						<!-- FOR NEW @NC/VUE template #icon>
 							<CalendarIcon />
 						</template-->
@@ -236,7 +237,9 @@ export default {
 			return event.inv[0]?.comp[0]?.name
 		},
 		getFormattedDate(event) {
-			return moment.unix(event.inv[0]?.comp[0]?.s[0]?.u / 1000).format('LLL')
+			return event.inv[0]?.comp[0]?.s[0]?.u
+				? moment.unix(event.inv[0]?.comp[0]?.s[0]?.u / 1000).format('LLL')
+				: moment(event.inv[0]?.comp[0]?.s[0]?.d).format('LL')
 		},
 	},
 }
