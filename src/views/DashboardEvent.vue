@@ -7,7 +7,10 @@
 			<DashboardWidgetItem
 				:id="item.id"
 				:target-url="item.targetUrl"
+				:avatar-url="item.avatarUrl"
+				:avatar-username="item.avatarUsername"
 				:avatar-is-no-user="item.avatarIsNoUser"
+				:overlay-icon-url="item.overlayIconUrl"
 				:main-text="item.mainText"
 				:sub-text="item.subText">
 				<template #avatar>
