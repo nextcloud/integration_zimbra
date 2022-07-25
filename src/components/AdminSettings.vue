@@ -11,7 +11,7 @@
 		<p class="settings-hint">
 			<InformationVariantIcon :size="24" class="icon" />
 			{{ t('integration_zimbra', 'Make sure you set the "Redirect URI" to') }}
-			&nbsp;<b> {{ redirect_uri }} </b>
+			&nbsp;<strong>{{ redirect_uri }}</strong>
 		</p>
 		<br>
 		<p class="settings-hint">

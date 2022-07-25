@@ -1,29 +1,23 @@
 <template>
 	<div id="zimbra_prefs" class="section">
 		<h2>
-			<a class="icon icon-zimbra" />
+			<ZimbraIcon class="icon" />
 			{{ t('integration_zimbra', 'Zimbra integration') }}
 		</h2>
-		<div id="toggle-zimbra-navigation-link">
-			<input
-				id="zimbra-link"
-				type="checkbox"
-				class="checkbox"
-				:checked="state.navigation_enabled"
-				@input="onNavigationChange">
-			<label for="zimbra-link">{{ t('integration_zimbra', 'Enable navigation link') }}</label>
-		</div>
-		<br><br>
-		<p v-if="!showOAuth && !connected" class="settings-hint">
-			{{ t('integration_zimbra', 'If you are allowed to, You can create a personal access token in your Zimbra profile -> Security -> Personal Access Tokens') }}
-		</p>
+		<CheckboxRadioSwitch
+			class="field"
+			:checked.sync="state.navigation_enabled"
+			@update:checked="onNavigationChange">
+			{{ t('integration_zimbra', 'Enable navigation link') }}
+		</CheckboxRadioSwitch>
+		<br>
 		<p v-if="!showOAuth && !connected" class="settings-hint">
 			{{ t('integration_zimbra', 'You can connect with a personal token OR just with your login/password') }}
 		</p>
 		<div id="zimbra-content">
-			<div class="zimbra-grid-form">
+			<div class="field">
 				<label for="zimbra-url">
-					<a class="icon icon-link" />
+					<EarthIcon :size="20" class="icon" />
 					{{ t('integration_zimbra', 'Zimbra instance address') }}
 				</label>
 				<input id="zimbra-url"
@@ -32,36 +26,36 @@
 					:disabled="connected === true"
 					:placeholder="t('integration_zimbra', 'Zimbra instance address')"
 					@input="onInput">
-				<label v-show="showToken"
-					for="zimbra-token">
-					<a class="icon icon-category-auth" />
+			</div>
+			<div v-show="showToken" class="field">
+				<label for="zimbra-token">
+					<KeyIcon :size="20" class="icon" />
 					{{ t('integration_zimbra', 'Personal access token') }}
 				</label>
-				<input v-show="showToken"
-					id="zimbra-token"
+				<input id="zimbra-token"
 					v-model="state.token"
 					type="password"
 					:disabled="connected === true"
 					:placeholder="t('integration_zimbra', 'Zimbra personal access token')"
 					@keyup.enter="onConnectClick">
-				<label v-show="showLoginPassword"
-					for="zimbra-login">
-					<a class="icon icon-user" />
+			</div>
+			<div v-show="showLoginPassword" class="field">
+				<label for="zimbra-login">
+					<AccountIcon :size="20" class="icon" />
 					{{ t('integration_zimbra', 'Login') }}
 				</label>
-				<input v-show="showLoginPassword"
-					id="zimbra-login"
+				<input id="zimbra-login"
 					v-model="login"
 					type="text"
 					:placeholder="t('integration_zimbra', 'Zimbra login')"
 					@keyup.enter="onConnectClick">
-				<label v-show="showLoginPassword"
-					for="zimbra-password">
-					<a class="icon icon-password" />
+			</div>
+			<div v-show="showLoginPassword" class="field">
+				<label for="zimbra-password">
+					<LockIcon :size="20" class="icon" />
 					{{ t('integration_zimbra', 'Password') }}
 				</label>
-				<input v-show="showLoginPassword"
-					id="zimbra-password"
+				<input id="zimbra-password"
 					v-model="password"
 					type="password"
 					:placeholder="t('integration_zimbra', 'Zimbra password')"
@@ -77,7 +71,7 @@
 				</template>
 				{{ t('integration_zimbra', 'Connect to Zimbra') }}
 			</Button>
-			<div v-if="connected" class="zimbra-grid-form">
+			<div v-if="connected" class="field">
 				<label class="zimbra-connected">
 					<a class="icon icon-checkmark-color" />
 					{{ t('integration_zimbra', 'Connected as {user}', { user: connectedDisplayName }) }}
@@ -91,41 +85,53 @@
 				<span />
 			</div>
 			<br>
-			<div v-if="connected" id="zimbra-search-block">
-				<input
-					id="search-zimbra"
-					type="checkbox"
-					class="checkbox"
-					:checked="state.search_mails_enabled"
-					@input="onSearchChange">
-				<label for="search-zimbra">{{ t('integration_zimbra', 'Enable searching for emails') }}</label>
-				<br><br>
-				<p v-if="state.search_mails_enabled" class="settings-hint">
-					<span class="icon icon-details" />
-					{{ t('integration_zimbra', 'Warning, everything you type in the search bar will be sent to Zimbra.') }}
-				</p>
-			</div>
+			<CheckboxRadioSwitch v-if="connected"
+				class="field"
+				:checked.sync="state.search_mails_enabled"
+				@update:checked="onSearchChange">
+				{{ t('integration_zimbra', 'Enable searching for emails') }}
+			</CheckboxRadioSwitch>
+			<br>
+			<p v-if="state.search_mails_enabled" class="settings-hint">
+				<InformationVariantIcon :size="24" class="icon" />
+				{{ t('integration_zimbra', 'Warning, everything you type in the search bar will be sent to Zimbra.') }}
+			</p>
 		</div>
 	</div>
 </template>
 
 <script>
+import InformationVariantIcon from 'vue-material-design-icons/InformationVariant'
+import EarthIcon from 'vue-material-design-icons/Earth'
+import KeyIcon from 'vue-material-design-icons/Key'
+import LockIcon from 'vue-material-design-icons/Lock'
+import AccountIcon from 'vue-material-design-icons/Account'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew'
 import CloseIcon from 'vue-material-design-icons/Close'
 import Button from '@nextcloud/vue/dist/Components/Button'
+import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
+
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { delay, oauthConnect } from '../utils'
 import { showSuccess, showError } from '@nextcloud/dialogs'
+import ZimbraIcon from './icons/ZimbraIcon'
 
 export default {
 	name: 'PersonalSettings',
 
 	components: {
+		ZimbraIcon,
 		Button,
+		CheckboxRadioSwitch,
 		OpenInNewIcon,
 		CloseIcon,
+		InformationVariantIcon,
+		EarthIcon,
+		KeyIcon,
+		AccountIcon,
+		LockIcon,
 	},
 
 	props: [],
@@ -182,13 +188,11 @@ export default {
 			this.password = ''
 			this.saveOptions({ token: '' })
 		},
-		onSearchChange(e) {
-			this.state.search_mails_enabled = e.target.checked
-			this.saveOptions({ search_mails_enabled: this.state.search_mails_enabled ? '1' : '0' })
+		onSearchChange(newValue) {
+			this.saveOptions({ search_mails_enabled: newValue ? '1' : '0' })
 		},
-		onNavigationChange(e) {
-			this.state.navigation_enabled = e.target.checked
-			this.saveOptions({ navigation_enabled: this.state.navigation_enabled ? '1' : '0' })
+		onNavigationChange(newValue) {
+			this.saveOptions({ navigation_enabled: newValue ? '1' : '0' })
 		},
 		onInput() {
 			this.loading = true
@@ -281,54 +285,37 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.zimbra-grid-form label {
-	line-height: 38px;
-}
+#zimbra_prefs {
+	.field {
+		display: flex;
+		align-items: center;
+		margin-left: 30px;
 
-.zimbra-grid-form input {
-	width: 100%;
-}
+		input,
+		label {
+			width: 300px;
+		}
 
-.zimbra-grid-form {
-	max-width: 600px;
-	display: grid;
-	grid-template: 1fr / 1fr 1fr;
-	button .icon {
-		margin-bottom: -1px;
+		label {
+			display: flex;
+			align-items: center;
+		}
+
+		.icon {
+			margin-right: 8px;
+		}
 	}
-}
 
-#zimbra_prefs .icon {
-	display: inline-block;
-	width: 32px;
-}
+	.settings-hint {
+		display: flex;
+		align-items: center;
+	}
 
-#zimbra_prefs .grid-form .icon {
-	margin-bottom: -3px;
-}
-
-.icon-zimbra {
-	background-image: url('../../img/app-dark.svg');
-	background-size: 23px 23px;
-	height: 23px;
-	margin-bottom: -4px;
-	filter: var(--background-invert-if-dark);
-}
-
-// for NC <= 24
-body.theme--dark .icon-zimbra {
-	background-image: url('../../img/app.svg');
-}
-
-#zimbra-content {
-	margin-left: 40px;
-}
-
-#zimbra-search-block .icon {
-	width: 22px;
-}
-
-#toggle-zimbra-navigation-link {
-	margin-left: 40px;
+	h2 {
+		display: flex;
+		.icon {
+			margin-right: 12px;
+		}
+	}
 }
 </style>
