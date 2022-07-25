@@ -79,7 +79,8 @@ class ConfigController extends Controller {
 	 */
 	public function setConfig(array $values): DataResponse {
 		if (isset($values['url'], $values['login'], $values['password'])) {
-			return $this->loginWithCredentials($values['url'], $values['login'], $values['password']);
+			$this->config->setUserValue($this->userId, Application::APP_ID, 'url', $values['url']);
+			return $this->loginWithCredentials($values['login'], $values['password']);
 		}
 
 		foreach ($values as $key => $value) {
@@ -97,6 +98,8 @@ class ConfigController extends Controller {
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_name');
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'user_displayname');
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'token');
+				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'login');
+				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'password');
 				$result['user_id'] = '';
 				$result['user_name'] = '';
 				$result['user_displayname'] = '';
@@ -108,13 +111,18 @@ class ConfigController extends Controller {
 		return new DataResponse($result);
 	}
 
-	private function loginWithCredentials(string $url, string $login, string $password): DataResponse {
+	private function loginWithCredentials(string $login, string $password): DataResponse {
 		// cleanup refresh token and expiration date on classic login
 		$this->config->deleteUserValue($this->userId, Application::APP_ID, 'refresh_token');
 		$this->config->deleteUserValue($this->userId, Application::APP_ID, 'token_expires_at');
 
-		$result = $this->zimbraAPIService->login($url, $login, $password);
+		$result = $this->zimbraAPIService->login($this->userId, $login, $password);
 		if (isset($result['token'])) {
+			// we have to store login and password for now
+			// even if we use a token, it expires and we can only get a new one with login/password
+			$this->config->setUserValue($this->userId, Application::APP_ID, 'login', $login);
+			$this->config->setUserValue($this->userId, Application::APP_ID, 'password', $password);
+
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'token', $result['token']);
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_name', $login);
 			// get user info

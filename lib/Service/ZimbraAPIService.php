@@ -228,7 +228,28 @@ class ZimbraAPIService {
 					return $body;
 				}
 			}
-		} catch (ServerException | ClientException $e) {
+		} catch (ClientException $e) {
+			$respCode = $e->getResponse()->getStatusCode();
+			// special case: 401, unauthenticated
+			// we try to reauthenticate with same login/password
+			// if it fails, we delete the login/password
+			// if it works, we perform the request again
+			if ($respCode === 401) {
+				$login = $this->config->getUserValue($userId, Application::APP_ID, 'login');
+				$password = $this->config->getUserValue($userId, Application::APP_ID, 'password');
+				if ($login && $password) {
+					$loginResult = $this->login($userId, $login, $password);
+					if (isset($loginResult['token'])) {
+						$this->config->setUserValue($userId, Application::APP_ID, 'token', $loginResult['token']);
+						return $this->restRequest($userId, $endPoint, $params, $method, $jsonResponse);
+					} else {
+						$this->config->deleteUserValue($userId, Application::APP_ID, 'login');
+						$this->config->deleteUserValue($userId, Application::APP_ID, 'password');
+					}
+				}
+			}
+			return ['error' => $e->getMessage()];
+		} catch (ServerException $e) {
 			$this->logger->debug('Zimbra API error : '.$e->getMessage(), ['app' => $this->appName]);
 			return ['error' => $e->getMessage()];
 		}
@@ -403,7 +424,9 @@ class ZimbraAPIService {
 	 * @param string $password
 	 * @return array
 	 */
-	public function login(string $baseUrl, string $login, string $password): array {
+	public function login(string $userId, string $login, string $password): array {
+		$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$baseUrl = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
 		try {
 			$url = $baseUrl . '/service/soap';
 			$options = [
