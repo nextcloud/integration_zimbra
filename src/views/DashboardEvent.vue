@@ -225,7 +225,12 @@ export default {
 			return event.id + ':' + event.inv[0]?.comp[0]?.s[0]?.u
 		},
 		getEventTarget(event) {
-			return this.showMoreUrl
+			const startTs = moment(event.inv[0]?.comp[0]?.s[0]?.d).unix() * 1000
+			const endTs = moment(event.inv[0]?.comp[0]?.e[0]?.d).unix() * 1000
+			return this.zimbraUrl + '/modern/calendar/event/details/' + event.id + '-' + event.inv[0]?.id
+				+ '?utcRecurrenceId=' + event.inv[0]?.comp[0]?.s[0]?.d
+				+ '&start=' + startTs
+				+ '&end=' + endTs
 		},
 		getAvatarImage(event) {
 			return imagePath('core', 'places/calendar.svg')
@@ -242,7 +247,11 @@ export default {
 		getFormattedDate(event) {
 			return event.inv[0]?.comp[0]?.s[0]?.u
 				? moment.unix(event.inv[0]?.comp[0]?.s[0]?.u / 1000).format('LLL')
+					+ ' -> '
+					+ moment.unix(event.inv[0]?.comp[0]?.e[0]?.u / 1000).format('LLL')
 				: moment(event.inv[0]?.comp[0]?.s[0]?.d).format('LL')
+					+ ' -> '
+					+ moment(event.inv[0]?.comp[0]?.e[0]?.d).format('LL')
 		},
 	},
 }
