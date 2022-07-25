@@ -10,10 +10,6 @@
 			@update:checked="onNavigationChange">
 			{{ t('integration_zimbra', 'Enable navigation link') }}
 		</CheckboxRadioSwitch>
-		<br>
-		<p v-if="!showOAuth && !connected" class="settings-hint">
-			{{ t('integration_zimbra', 'You can connect with a personal token OR just with your login/password') }}
-		</p>
 		<div id="zimbra-content">
 			<div class="field">
 				<label for="zimbra-url">
@@ -26,18 +22,6 @@
 					:disabled="connected === true"
 					:placeholder="t('integration_zimbra', 'Zimbra instance address')"
 					@input="onInput">
-			</div>
-			<div v-show="showToken" class="field">
-				<label for="zimbra-token">
-					<KeyIcon :size="20" class="icon" />
-					{{ t('integration_zimbra', 'Personal access token') }}
-				</label>
-				<input id="zimbra-token"
-					v-model="state.token"
-					type="password"
-					:disabled="connected === true"
-					:placeholder="t('integration_zimbra', 'Zimbra personal access token')"
-					@keyup.enter="onConnectClick">
 			</div>
 			<div v-show="showLoginPassword" class="field">
 				<label for="zimbra-login">
@@ -61,10 +45,10 @@
 					:placeholder="t('integration_zimbra', 'Zimbra password')"
 					@keyup.enter="onConnectClick">
 			</div>
-			<Button v-if="!connected && (showOAuth || (login && password) || state.token)"
+			<Button v-if="!connected"
 				id="zimbra-connect"
-				:disabled="loading === true"
-				:class="{ loading }"
+				:disabled="loading === true || !(login && password)"
+				:class="{ loading, field: true }"
 				@click="onConnectClick">
 				<template #icon>
 					<OpenInNewIcon />
@@ -92,7 +76,7 @@
 				{{ t('integration_zimbra', 'Enable searching for emails') }}
 			</CheckboxRadioSwitch>
 			<br>
-			<p v-if="state.search_mails_enabled" class="settings-hint">
+			<p v-if="connected && state.search_mails_enabled" class="settings-hint">
 				<InformationVariantIcon :size="24" class="icon" />
 				{{ t('integration_zimbra', 'Warning, everything you type in the search bar will be sent to Zimbra.') }}
 			</p>
@@ -103,7 +87,6 @@
 <script>
 import InformationVariantIcon from 'vue-material-design-icons/InformationVariant'
 import EarthIcon from 'vue-material-design-icons/Earth'
-import KeyIcon from 'vue-material-design-icons/Key'
 import LockIcon from 'vue-material-design-icons/Lock'
 import AccountIcon from 'vue-material-design-icons/Account'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew'
@@ -129,7 +112,6 @@ export default {
 		CloseIcon,
 		InformationVariantIcon,
 		EarthIcon,
-		KeyIcon,
 		AccountIcon,
 		LockIcon,
 	},
@@ -151,18 +133,13 @@ export default {
 			return (this.state.url === this.state.oauth_instance_url) && this.state.client_id && this.state.client_secret
 		},
 		connected() {
-			return this.state.token && this.state.token !== ''
-				&& this.state.url && this.state.url !== ''
-				&& this.state.user_name && this.state.user_name !== ''
+			return !!this.state.token && !!this.state.url && !!this.state.user_name
 		},
 		connectedDisplayName() {
 			return this.state.user_displayname + ' (' + this.state.user_name + ')'
 		},
 		showLoginPassword() {
-			return !this.showOAuth && !this.connected && !this.state.token
-		},
-		showToken() {
-			return !this.showOAuth && !this.login && !this.password
+			return !this.showOAuth && !this.connected
 		},
 	},
 
@@ -214,51 +191,40 @@ export default {
 				values,
 			}
 			const url = generateUrl('/apps/integration_zimbra/config')
-			axios.put(url, req)
-				.then((response) => {
-					if (response.data.user_name !== undefined) {
+			axios.put(url, req).then((response) => {
+				if (response.data.user_name !== undefined) {
+					this.state.user_name = response.data.user_name
+					if (this.state.token && response.data.user_name === '') {
+						showError(t('integration_zimbra', 'Invalid access token'))
+						this.state.token = ''
+					} else if (this.login && this.password && response.data.user_name === '') {
+						showError(t('integration_zimbra', 'Invalid login/password'))
+					} else if (response.data.user_name) {
+						showSuccess(t('integration_zimbra', 'Successfully connected to Zimbra!'))
+						this.state.user_id = response.data.user_id
 						this.state.user_name = response.data.user_name
-						if (this.state.token && response.data.user_name === '') {
-							showError(t('integration_zimbra', 'Invalid access token'))
-							this.state.token = ''
-						} else if (this.login && this.password && response.data.user_name === '') {
-							showError(t('integration_zimbra', 'Invalid login/password'))
-						} else if (response.data.user_name) {
-							showSuccess(t('integration_zimbra', 'Successfully connected to Zimbra!'))
-							this.state.user_id = response.data.user_id
-							this.state.user_name = response.data.user_name
-							this.state.user_displayname = response.data.user_displayname
-							this.state.token = 'dumdum'
-						}
-					} else {
-						showSuccess(t('integration_zimbra', 'Zimbra options saved'))
+						this.state.user_displayname = response.data.user_displayname
+						this.state.token = 'dumdum'
 					}
-				})
-				.catch((error) => {
-					showError(
-						t('integration_zimbra', 'Failed to save Zimbra options')
-						+ ': ' + (error.response?.request?.responseText ?? '')
-					)
-					console.error(error)
-				})
-				.then(() => {
-					this.loading = false
-				})
+				} else {
+					showSuccess(t('integration_zimbra', 'Zimbra options saved'))
+				}
+			}).catch((error) => {
+				showError(
+					t('integration_zimbra', 'Failed to save Zimbra options')
+					+ ': ' + (error.response?.request?.responseText ?? '')
+				)
+				console.error(error)
+			}).then(() => {
+				this.loading = false
+			})
 		},
 		onConnectClick() {
 			if (this.showOAuth) {
 				this.connectWithOauth()
 			} else if (this.login && this.password) {
 				this.connectWithCredentials()
-			} else {
-				this.connectWithToken()
 			}
-		},
-		connectWithToken() {
-			this.loading = true
-			this.saveOptions({
-				token: this.state.token,
-			})
 		},
 		connectWithCredentials() {
 			this.loading = true
