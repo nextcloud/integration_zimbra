@@ -55,8 +55,14 @@ class ZimbraSearchMailProvider implements IProvider {
 	 * @var ZimbraAPIService
 	 */
 	private $service;
-	private IDateTimeFormatter $dateTimeFormatter;
-	private IDateTimeZone $dateTimeZone;
+	/**
+	 * @var IDateTimeFormatter
+	 */
+	private $dateTimeFormatter;
+	/**
+	 * @var IDateTimeZone
+	 */
+	private $dateTimeZone;
 
 	/**
 	 * CospendSearchProvider constructor.
@@ -125,12 +131,12 @@ class ZimbraSearchMailProvider implements IProvider {
 		$accessToken = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'token');
 		$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 		$url = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
-		$searchIssuesEnabled = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'search_mails_enabled', '0') === '1';
-		if ($accessToken === '' || !$searchIssuesEnabled) {
+		$searchEmailsEnabled = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'search_mails_enabled', '0') === '1';
+		if ($accessToken === '' || !$searchEmailsEnabled) {
 			return SearchResult::paginated($this->getName(), [], 0);
 		}
 
-		$issues = $this->service->searchMails($user->getUID(), $url, $term, $offset, $limit);
+		$emails = $this->service->searchEmails($user->getUID(), $term, $offset, $limit);
 		if (isset($searchResult['error'])) {
 			return SearchResult::paginated($this->getName(), [], 0);
 		}
@@ -145,7 +151,7 @@ class ZimbraSearchMailProvider implements IProvider {
 				$finalThumbnailUrl === '' ? 'icon-zimbra-search-fallback' : '',
 				true
 			);
-		}, $issues);
+		}, $emails);
 
 		return SearchResult::paginated(
 			$this->getName(),
@@ -159,7 +165,7 @@ class ZimbraSearchMailProvider implements IProvider {
 	 * @return string
 	 */
 	protected function getMainText(array $entry): string {
-		return $entry['message'];
+		return $entry['su'];
 	}
 
 	/**
@@ -167,20 +173,21 @@ class ZimbraSearchMailProvider implements IProvider {
 	 * @return string
 	 */
 	protected function getSubline(array $entry): string {
-		return $this->l10n->t('%s in #%s at %s', [$entry['user_name'], $entry['channel_name'], $this->getFormattedDate($entry['create_at'])]);
+		return ($entry['e'][0]['a'] ?? '??') . ' ' . $this->getFormattedDate($entry['d'] / 1000);
 	}
 
 	protected function getFormattedDate(int $timestamp): string {
 		// return (new DateTime())->setTimestamp((int) ($timestamp / 1000))->format('Y-m-d H:i:s');
-		return $this->dateTimeFormatter->formatDateTime((int) ($timestamp / 1000), 'long', 'short', $this->dateTimeZone->getTimeZone());
+		return $this->dateTimeFormatter->formatDateTime($timestamp, 'long', 'short', $this->dateTimeZone->getTimeZone());
 	}
 
 	/**
 	 * @param array $entry
+	 * @param string $url
 	 * @return string
 	 */
 	protected function getLinkToZimbra(array $entry, string $url): string {
-		return $url . '/' . $entry['team_name'] . '/channels/' . $entry['channel_name'];
+		return $url . '/modern/email/Inbox/conversation/' . $entry['cid'];
 	}
 
 	/**
@@ -189,9 +196,7 @@ class ZimbraSearchMailProvider implements IProvider {
 	 * @return string
 	 */
 	protected function getThumbnailUrl(array $entry): string {
-		$userId = $entry['user_id'] ?? '';
-		return $userId
-			? $this->urlGenerator->linkToRoute('integration_zimbra.zimbraAPI.getUserAvatar', ['userId' => $userId])
-			: '';
+		return '';
+		// return $this->urlGenerator->linkToRoute('integration_zimbra.zimbraAPI.getUserAvatar', ['userId' => $userId]);
 	}
 }

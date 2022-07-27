@@ -130,6 +130,29 @@ class ZimbraAPIService {
 
 	/**
 	 * @param string $userId
+	 * @param int $offset
+	 * @param int $limit
+	 * @return array
+	 * @throws Exception
+	 */
+	public function searchEmails(string $userId, string $query, int $offset = 0, int $limit = 10): array {
+		$zimbraUserName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
+		$params = [
+			'query' => $query,
+		];
+		$result = $this->restRequest($userId, 'home/' . $zimbraUserName . '/inbox', $params);
+		$emails = $result['m'] ?? [];
+
+		// sort emails by date, DESC, recents first
+		usort($emails, function($a, $b) {
+			return ($a['d'] > $b['d']) ? -1 : 1;
+		});
+
+		return array_slice($emails, $offset, $limit);
+	}
+
+	/**
+	 * @param string $userId
 	 * @param string $zimbraUserId
 	 * @param string $zimbraUrl
 	 * @return array
