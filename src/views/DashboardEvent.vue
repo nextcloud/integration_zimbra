@@ -122,7 +122,7 @@ export default {
 		},
 		lastTimestamp() {
 			const nbEvent = this.events.length
-			return (nbEvent > 0) ? (this.events[0].inv[0]?.comp[0]?.s[0]?.u / 1000) : null
+			return (nbEvent > 0) ? (this.events[0].inst[0]?.s / 1000) : null
 		},
 		lastMoment() {
 			return moment.unix(this.lastTimestamp)
@@ -222,15 +222,18 @@ export default {
 			return events
 		},
 		getUniqueKey(event) {
-			return event.id + ':' + event.inv[0]?.comp[0]?.s[0]?.u
+			return event.id + ':' + event.inst[0]?.s
 		},
 		getEventTarget(event) {
+			return this.zimbraUrl + '/modern/calendar/event/details/' + event.invId
+			/*
 			const startTs = moment(event.inv[0]?.comp[0]?.s[0]?.d).unix() * 1000
 			const endTs = moment(event.inv[0]?.comp[0]?.e[0]?.d).unix() * 1000
 			return this.zimbraUrl + '/modern/calendar/event/details/' + event.id + '-' + event.inv[0]?.id
 				+ '?utcRecurrenceId=' + event.inv[0]?.comp[0]?.s[0]?.d
 				+ '&start=' + startTs
 				+ '&end=' + endTs
+			*/
 		},
 		getAvatarImage(event) {
 			return imagePath('core', 'places/calendar.svg')
@@ -242,16 +245,17 @@ export default {
 			return this.getFormattedDate(event)
 		},
 		getMainText(event) {
-			return event.inv[0]?.comp[0]?.name
+			return event.name
 		},
 		getFormattedDate(event) {
-			return event.inv[0]?.comp[0]?.s[0]?.u
-				? moment.unix(event.inv[0]?.comp[0]?.s[0]?.u / 1000).format('LLL')
-					+ ' -> '
-					+ moment.unix(event.inv[0]?.comp[0]?.e[0]?.u / 1000).format('LLL')
-				: moment(event.inv[0]?.comp[0]?.s[0]?.d).format('LL')
-					+ ' -> '
-					+ moment(event.inv[0]?.comp[0]?.e[0]?.d).format('LL')
+			const duration = event.dur / 1000
+			// as we search with a min date, we know the first inst is the next event occurence
+			const startTimestamp = event.inst[0]?.s / 1000
+			const endTimestamp = startTimestamp + duration
+
+			return moment.unix(startTimestamp).format('LLL')
+				+ ' -> '
+				+ moment.unix(endTimestamp).format('LLL')
 		},
 	},
 }

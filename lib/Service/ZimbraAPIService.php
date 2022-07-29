@@ -83,26 +83,50 @@ class ZimbraAPIService {
 
 	/**
 	 * @param string $userId
-	 * @return array|string[]
+	 * @param int|null $sinceTs
+	 * @return array
 	 * @throws Exception
 	 */
-	public function getUpcomingEvents(string $userId, ?int $sinceTs = null): array {
-		$zimbraUserName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
+	public function getUpcomingEventsSoap(string $userId, ?int $sinceTs = null): array {
+		// get calendar list
+		$calResp = $this->soapRequest($userId, 'GetFolderRequest', 'urn:zimbraMail', ['view' => 'appointment']);
+		$topFolders = $calResp['Body']['GetFolderResponse']['folder'] ?? [];
+		$folders = [];
+		foreach ($topFolders as $topFolder) {
+			$folders[] = 'inid:"' . $topFolder['id'] . '"';
+			foreach ($topFolder['folder'] ?? [] as $subFolder) {
+				$folders[] = 'inid:"' . $subFolder['id'] . '"';
+			}
+		}
+		$queryString = '(' . implode(' OR ', $folders) . ')';
+
+		// get events
 		if ($sinceTs === null) {
 			$sinceMilliTs = (new DateTime())->getTimestamp() * 1000;
 		} else {
 			$sinceMilliTs = $sinceTs * 1000;
 		}
 		$params = [
-			'start' => $sinceMilliTs,
+			'query' => [
+				'_content' => $queryString,
+			],
+			'sortBy' => 'dateAsc',
+			'fetch' =>  'all',
+			'offset' => 0,
+			'limit' => 100,
+			'types' => 'appointment',
+			'calExpandInstStart' => $sinceMilliTs,
 			// start + 30 days
-			'end' => $sinceMilliTs + (60 * 60 * 24 * 30 * 1000),
+			'calExpandInstEnd' => $sinceMilliTs + (60 * 60 * 24 * 30 * 1000),
 		];
-		$result = $this->restRequest($userId, 'home/' . $zimbraUserName . '/calendar', $params);
-		if (isset($result['appt'])) {
-			return $result['appt'];
-		}
-		return $result;
+		$eventResp = $this->soapRequest($userId, 'SearchRequest', 'urn:zimbraMail', $params);
+		$events = $eventResp['Body']['SearchResponse']['appt'] ?? [];
+		usort($events, static function(array $a, array $b) {
+			$aStart = $a['inst'][0]['s'];
+			$bStart = $b['inst'][0]['s'];
+			return ($aStart < $bStart) ? -1 : 1;
+		});
+		return $events;
 	}
 
 	/**

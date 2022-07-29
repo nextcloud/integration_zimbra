@@ -124,7 +124,7 @@ class ZimbraAPIController extends Controller {
 		if ($zimbraUserName === '') {
 			return new DataResponse('not connected', Http::STATUS_BAD_REQUEST);
 		}
-		$result = $this->zimbraAPIService->getUpcomingEvents($this->userId);
+		$result = $this->zimbraAPIService->getUpcomingEventsSoap($this->userId);
 		if (isset($result['error'])) {
 			return new DataResponse($result['error'], Http::STATUS_BAD_REQUEST);
 		} else {
