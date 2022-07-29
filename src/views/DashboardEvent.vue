@@ -225,15 +225,14 @@ export default {
 			return event.id + ':' + event.inst[0]?.s
 		},
 		getEventTarget(event) {
+			const duration = event.dur
+			const startTimestampMilli = event.inst[0]?.s
+			const endTimestampMilli = startTimestampMilli + duration
 			return this.zimbraUrl + '/modern/calendar/event/details/' + event.invId
-			/*
-			const startTs = moment(event.inv[0]?.comp[0]?.s[0]?.d).unix() * 1000
-			const endTs = moment(event.inv[0]?.comp[0]?.e[0]?.d).unix() * 1000
-			return this.zimbraUrl + '/modern/calendar/event/details/' + event.id + '-' + event.inv[0]?.id
-				+ '?utcRecurrenceId=' + event.inv[0]?.comp[0]?.s[0]?.d
-				+ '&start=' + startTs
-				+ '&end=' + endTs
-			*/
+				+ '?utcRecurrenceId=' + event.inst[0]?.ridZ
+				+ '&start=' + startTimestampMilli
+				+ '&end=' + endTimestampMilli
+				+ '&tabid=' + (moment().unix() * 1000)
 		},
 		getAvatarImage(event) {
 			return imagePath('core', 'places/calendar.svg')
