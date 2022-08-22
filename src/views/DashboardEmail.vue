@@ -64,7 +64,7 @@ import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent.js'
 import LoginVariantIcon from 'vue-material-design-icons/LoginVariant.vue'
 import NcButton from '@nextcloud/vue/dist/Components/Button.js'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
-// import MailIcon from 'vue-material-design-icons/Mail'
+// import MailIcon from 'vue-material-design-icons/Mail.vue'
 
 import { oauthConnect, oauthConnectConfirmDialog } from '../utils.js'
 

@@ -1,0 +1,35 @@
+{
+  "Header": {
+    "context": {
+      "_jsns":"urn:zimbra",
+      "userAgent":{
+        "name":"curl",
+        "version":"7.54.0"
+      },
+      "authTokenControl":{
+        "voidOnExpired":true
+      },
+      "account":{
+        "_content":"julien",
+        "by":"name"
+      },
+      "authToken":"0_08097476b0f99f35f6ef0b5ece8583d06542e6a9_69643d33363a37663330626564392d643431332d343735322d613961652d6432396237373836326333383b6578703d31333a313635393130363830353934373b747970653d363a7a696d6272613b753d313a613b7469643d31303a313536323535333237363b76657273696f6e3d31333a392e302e305f47415f343137383b"
+    }
+  },
+  "Body": {
+    "SearchRequest": {
+      "_jsns":"urn:zimbraMail",
+      "query": {
+        "_content":"(inid:\"314\" OR inid:\"10\" OR inid:\"15\")"
+      },
+      "sortBy":"dateAsc",
+      "fetch": "all",
+      "offset":0,
+      "limit":10,
+      "types":"appointment",
+      "calExpandInstStart":1651357815000,
+      "calExpandInstEnd":1673899815000
+    }
+  }
+}
+
