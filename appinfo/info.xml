@@ -1,28 +1,29 @@
 <?xml version="1.0"?>
 <info>
-    <id>integration_zimbra</id>
-    <name>Zimbra integration</name>
-    <summary>Integration of Zimbra</summary>
-    <description><![CDATA[Zimbra integration into Nextcloud]]></description>
-    <version>1.0.0</version>
-    <licence>agpl</licence>
-    <author>Julien Veyssier</author>
-    <namespace>Zimbra</namespace>
-    <documentation>
-        <developer>https://github.com/eneiluj/integration_zimbra</developer>
-    </documentation>
-    <category>integration</category>
-    <category>dashboard</category>
-    <website>https://github.com/eneiluj/integration_zimbra</website>
-    <bugs>https://github.com/eneiluj/integration_zimbra/issues</bugs>
-    <screenshot>https://github.com/eneiluj/integration_zimbra/raw/master/img/screenshot1.jpg</screenshot>
-    <dependencies>
-        <nextcloud min-version="22" max-version="25"/>
-    </dependencies>
-    <settings>
-        <admin>OCA\Zimbra\Settings\Admin</admin>
-        <admin-section>OCA\Zimbra\Settings\AdminSection</admin-section>
-        <personal>OCA\Zimbra\Settings\Personal</personal>
-        <personal-section>OCA\Zimbra\Settings\PersonalSection</personal-section>
-    </settings>
+	<id>integration_zimbra</id>
+	<name>Zimbra integration</name>
+	<summary>Integration of Zimbra</summary>
+	<description><![CDATA[Zimbra integration into Nextcloud]]></description>
+	<version>1.0.0</version>
+	<licence>agpl</licence>
+	<author>Julien Veyssier</author>
+	<namespace>Zimbra</namespace>
+	<documentation>
+		<developer>https://github.com/eneiluj/integration_zimbra</developer>
+	</documentation>
+	<category>integration</category>
+	<category>dashboard</category>
+	<website>https://github.com/eneiluj/integration_zimbra</website>
+	<bugs>https://github.com/eneiluj/integration_zimbra/issues</bugs>
+	<screenshot>https://github.com/eneiluj/integration_zimbra/raw/master/img/screenshot1.jpg</screenshot>
+	<screenshot>https://github.com/eneiluj/integration_zimbra/raw/master/img/screenshot2.jpg</screenshot>
+	<dependencies>
+		<nextcloud min-version="22" max-version="25"/>
+	</dependencies>
+	<settings>
+		<admin>OCA\Zimbra\Settings\Admin</admin>
+		<admin-section>OCA\Zimbra\Settings\AdminSection</admin-section>
+		<personal>OCA\Zimbra\Settings\Personal</personal>
+		<personal-section>OCA\Zimbra\Settings\PersonalSection</personal-section>
+	</settings>
 </info>
