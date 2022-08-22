@@ -12,8 +12,8 @@
  */
 
 import Vue from 'vue'
-import './bootstrap'
-import DashboardEvent from './views/DashboardEvent'
+import './bootstrap.js'
+import DashboardEvent from './views/DashboardEvent.vue'
 
 document.addEventListener('DOMContentLoaded', function() {
 

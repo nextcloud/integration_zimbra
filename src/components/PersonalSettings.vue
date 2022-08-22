@@ -45,7 +45,7 @@
 					:placeholder="t('integration_zimbra', 'Zimbra password')"
 					@keyup.enter="onConnectClick">
 			</div>
-			<Button v-if="!connected"
+			<NcButton v-if="!connected"
 				id="zimbra-connect"
 				:disabled="loading === true || !(login && password)"
 				:class="{ loading, field: true }"
@@ -54,18 +54,18 @@
 					<OpenInNewIcon />
 				</template>
 				{{ t('integration_zimbra', 'Connect to Zimbra') }}
-			</Button>
+			</NcButton>
 			<div v-if="connected" class="field">
 				<label class="zimbra-connected">
 					<a class="icon icon-checkmark-color" />
 					{{ t('integration_zimbra', 'Connected as {user}', { user: connectedDisplayName }) }}
 				</label>
-				<Button id="zimbra-rm-cred" @click="onLogoutClick">
+				<NcButton id="zimbra-rm-cred" @click="onLogoutClick">
 					<template #icon>
 						<CloseIcon />
 					</template>
 					{{ t('integration_zimbra', 'Disconnect from Zimbra') }}
-				</Button>
+				</NcButton>
 				<span />
 			</div>
 			<br>
@@ -85,28 +85,28 @@
 </template>
 
 <script>
-import InformationVariantIcon from 'vue-material-design-icons/InformationVariant'
-import EarthIcon from 'vue-material-design-icons/Earth'
-import LockIcon from 'vue-material-design-icons/Lock'
-import AccountIcon from 'vue-material-design-icons/Account'
-import OpenInNewIcon from 'vue-material-design-icons/OpenInNew'
-import CloseIcon from 'vue-material-design-icons/Close'
-import Button from '@nextcloud/vue/dist/Components/Button'
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
+import InformationVariantIcon from 'vue-material-design-icons/InformationVariant.vue'
+import EarthIcon from 'vue-material-design-icons/Earth.vue'
+import LockIcon from 'vue-material-design-icons/Lock.vue'
+import AccountIcon from 'vue-material-design-icons/Account.vue'
+import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
+import CloseIcon from 'vue-material-design-icons/Close.vue'
+import NcButton from '@nextcloud/vue/dist/Components/Button.js'
+import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
 
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
-import { delay, oauthConnect } from '../utils'
+import { delay, oauthConnect } from '../utils.js'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import ZimbraIcon from './icons/ZimbraIcon'
+import ZimbraIcon from './icons/ZimbraIcon.vue'
 
 export default {
 	name: 'PersonalSettings',
 
 	components: {
 		ZimbraIcon,
-		Button,
+		NcButton,
 		CheckboxRadioSwitch,
 		OpenInNewIcon,
 		CloseIcon,

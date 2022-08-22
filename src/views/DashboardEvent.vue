@@ -32,20 +32,20 @@
 					<div v-if="widgetState === 'no-token' || widgetState === 'error'" class="connect-button">
 						<a v-if="!initialState.oauth_is_possible"
 							:href="settingsUrl">
-							<Button>
+							<NcButton>
 								<template #icon>
 									<LoginVariantIcon />
 								</template>
 								{{ t('integration_zimbra', 'Connect to Zimbra') }}
-							</Button>
+							</NcButton>
 						</a>
-						<Button v-else
+						<NcButton v-else
 							@click="onOauthClick">
 							<template #icon>
 								<LoginVariantIcon />
 							</template>
 							{{ t('integration_zimbra', 'Connect to Zimbra') }}
-						</Button>
+						</NcButton>
 					</div>
 				</template>
 			</EmptyContent>
@@ -60,13 +60,14 @@ import { DashboardWidget, DashboardWidgetItem } from '@nextcloud/vue-dashboard'
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import moment from '@nextcloud/moment'
-import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
-import LoginVariantIcon from 'vue-material-design-icons/LoginVariant'
-import Button from '@nextcloud/vue/dist/Components/Button'
-import Avatar from '@nextcloud/vue/dist/Components/Avatar'
+import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent.js'
+import NcButton from '@nextcloud/vue/dist/Components/Button.js'
+import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
+
+import LoginVariantIcon from 'vue-material-design-icons/LoginVariant.vue'
 // import CalendarIcon from 'vue-material-design-icons/Calendar'
 
-import { oauthConnect, oauthConnectConfirmDialog } from '../utils'
+import { oauthConnect, oauthConnectConfirmDialog } from '../utils.js'
 
 export default {
 	name: 'DashboardEvent',
@@ -75,7 +76,7 @@ export default {
 		DashboardWidget,
 		DashboardWidgetItem,
 		EmptyContent,
-		Button,
+		NcButton,
 		Avatar,
 		LoginVariantIcon,
 		// CalendarIcon,

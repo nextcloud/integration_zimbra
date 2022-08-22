@@ -12,8 +12,8 @@
  */
 
 import Vue from 'vue'
-import './bootstrap'
-import DashboardEmail from './views/DashboardEmail'
+import './bootstrap.js'
+import DashboardEmail from './views/DashboardEmail.vue'
 
 document.addEventListener('DOMContentLoaded', function() {
 

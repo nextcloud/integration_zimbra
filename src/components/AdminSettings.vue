@@ -67,13 +67,13 @@
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
-import { delay } from '../utils'
+import { delay } from '../utils.js'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
-import InformationVariantIcon from 'vue-material-design-icons/InformationVariant'
-import EarthIcon from 'vue-material-design-icons/Earth'
-import KeyIcon from 'vue-material-design-icons/Key'
-import ZimbraIcon from './icons/ZimbraIcon'
+import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
+import InformationVariantIcon from 'vue-material-design-icons/InformationVariant.vue'
+import EarthIcon from 'vue-material-design-icons/Earth.vue'
+import KeyIcon from 'vue-material-design-icons/Key.vue'
+import ZimbraIcon from './icons/ZimbraIcon.vue'
 
 export default {
 	name: 'AdminSettings',
