@@ -17,6 +17,9 @@ use OCA\Zimbra\Dashboard\ZimbraEmailWidget;
 use OCA\Zimbra\Dashboard\ZimbraEventWidget;
 use OCA\Zimbra\Listener\CalendarObjectCreatedListener;
 use OCA\Zimbra\Listener\CalendarObjectUpdatedListener;
+use OCA\Zimbra\Service\ZimbraAPIService;
+use OCA\Zimbra\ZimbraAddressBook;
+use OCP\Contacts\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -42,6 +45,8 @@ class Application extends App implements IBootstrap {
 	public const APP_ID = 'integration_zimbra';
 
 	public const INTEGRATION_USER_AGENT = 'Nextcloud Zimbra integration';
+	public const APP_CONFIG_CACHE_TTL_CONTACTS = 'cache-ttl-contacts';
+	public const APP_CONFIG_CACHE_TTL_CONTACTS_DEFAULT = 600;
 	/**
 	 * @var mixed
 	 */
@@ -67,7 +72,21 @@ class Application extends App implements IBootstrap {
 
 	public function boot(IBootContext $context): void {
 		$context->injectFn(Closure::fromCallable([$this, 'registerNavigation']));
+		$context->injectFn(Closure::fromCallable([$this, 'registerAddressBook']));
 		Util::addStyle(self::APP_ID, 'zimbra-search');
+	}
+
+	public function registerAddressBook(IUserSession $userSession,
+										IManager $contactsManager,
+										ZimbraAddressBook $zimbraAddressBook,
+										ZimbraAPIService $zimbraAPIService): void {
+		$user = $userSession->getUser();
+		if ($user !== null) {
+			$userId = $user->getUID();
+			if ($zimbraAPIService->isUserConnected($userId)) {
+				$contactsManager->registerAddressBook($zimbraAddressBook);
+			}
+		}
 	}
 
 	public function registerNavigation(IUserSession $userSession): void {

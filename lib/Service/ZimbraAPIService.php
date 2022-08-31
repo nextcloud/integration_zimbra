@@ -71,6 +71,17 @@ class ZimbraAPIService {
 		$this->appVersion = $appManager->getAppVersion(Application::APP_ID);
 	}
 
+	public function isUserConnected(string $userId): bool {
+		$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
+		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
+
+		$userName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
+		$token = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+		$login = $this->config->getUserValue($userId, Application::APP_ID, 'login');
+		$password = $this->config->getUserValue($userId, Application::APP_ID, 'password');
+		return $url && $userName && $token && $login && $password;
+	}
+
 	/**
 	 * @param string $userId
 	 * @return array|string[]
@@ -79,6 +90,24 @@ class ZimbraAPIService {
 	public function getContacts(string $userId): array {
 		$zimbraUserName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
 		return $this->restRequest($userId, 'home/' . $zimbraUserName . '/contacts');
+	}
+
+	/**
+	 * @param string $userId
+	 * @param string $query
+	 * @return array|string[]
+	 * @throws Exception
+	 */
+	public function searchContacts(string $userId, string $query): array {
+		$zimbraUserName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
+		$params = [
+			'query' => $query,
+		];
+		$result = $this->restRequest($userId, 'home/' . $zimbraUserName . '/contacts', $params);
+		if (isset($result['cn']) && is_array($result['cn'])) {
+			return $result['cn'];
+		}
+		return [];
 	}
 
 	/**
