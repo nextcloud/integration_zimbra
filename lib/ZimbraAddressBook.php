@@ -100,8 +100,11 @@ class ZimbraAddressBook implements IAddressBook {
 			return [];
 		}
 
+		$zimbraAPIService = $this->zimbraAPIService;
+		$userId = $this->userId;
+
 		$formattedResult = array_map(
-			static function ($c) use ($options) {
+			static function ($c) use ($options, $zimbraAPIService, $userId) {
 				$attrs = $c['_attrs'] ?? [];
 				$formattedContact = [
 					// 'id' => $c['id'],
@@ -109,6 +112,30 @@ class ZimbraAddressBook implements IAddressBook {
 				];
 				if (isset($attrs['firstName']) || isset($attrs['lastName'])) {
 					$formattedContact['N'] = ($attrs['lastName'] ?? '') . ';' . ($attrs['firstName'] ?? '') . ';;;';
+				}
+
+				// PHOTO
+				if (false && isset($attrs['image'])) {
+					$mimeType = $attrs['image']['ct'];
+					$resourceId = (int) $c['id'];
+					$avatarResponse = $zimbraAPIService->getContactAvatar($userId, $resourceId);
+					if (isset($avatarResponse['body'])) {
+						$type = 'JPEG';
+						if (is_array($avatarResponse['headers']['Content-Type']) && count($avatarResponse['headers']['Content-Type']) > 0) {
+							$contentType = $avatarResponse['headers']['Content-Type'][0];
+						} else {
+							$contentType = $avatarResponse['headers']['Content-Type'];
+						}
+						if ($contentType === 'image/png') {
+							$type = 'PNG';
+						} elseif ($contentType === 'image/jpeg') {
+							$type = 'JPEG';
+						}
+						$b64Photo = stripslashes('data:image/' . strtolower($type) . ';base64\,') . base64_encode($avatarResponse['body']);
+						// core (core/src/OC/contactsmenu/contact.handlebars) appends '&size=32' to the image src
+						// so it messes up our base64 content...
+						$formattedContact['PHOTO'] = 'VALUE=uri:' . $b64Photo;
+					}
 				}
 
 				// EMAILS

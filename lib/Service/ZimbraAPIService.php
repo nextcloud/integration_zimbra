@@ -94,6 +94,22 @@ class ZimbraAPIService {
 
 	/**
 	 * @param string $userId
+	 * @param int $resourceId
+	 * @return array|string[]
+	 * @throws Exception
+	 */
+	public function getContactAvatar(string $userId, int $resourceId): array {
+		$params = [
+			'id' => $resourceId,
+			'part' => 1,
+			'max_width' => 240,
+			'max_height' => 240,
+		];
+		return $this->restRequest($userId, 'service/home/~/', $params, 'GET', false);
+	}
+
+	/**
+	 * @param string $userId
 	 * @param string $query
 	 * @return array|string[]
 	 * @throws Exception
@@ -301,7 +317,10 @@ class ZimbraAPIService {
 				if ($jsonResponse) {
 					return json_decode($body, true);
 				} else {
-					return $body;
+					return [
+						'body' => $body,
+						'headers' => $response->getHeaders(),
+					];
 				}
 			}
 		} catch (ClientException $e) {
