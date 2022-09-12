@@ -100,7 +100,7 @@ class ZimbraSearchMailProvider implements IProvider {
 	 * @inheritDoc
 	 */
 	public function getName(): string {
-		return $this->l10n->t('Zimbra messages');
+		return $this->l10n->t('Zimbra emails');
 	}
 
 	/**
