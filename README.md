@@ -1,16 +1,17 @@
 # Zimbra integration into Nextcloud
 
+Zimbra integration into Nextcloud provides a dashboard widget for unread emails,
+one for upcoming events, a search provider for emails and the ability so search for Zimbra contacts in Nextcloud.
+
+Nextcloud will suggest your Zimbra contacts addresses when you search for a contact via the top-right contacts menu
+or when you search for someone to share a file to.
+
 ## 🔧 Configuration
 
 ### User settings
 
 The account configuration happens in the "Connected accounts" user settings section.
-It requires to create a personal access token in your Zimbra settings.
+There, you can choose a Zimbra server address and enter your credentials to connect to your account.
 
 A link to the "Connected accounts" user settings section will be displayed in the widget
 for users who didn't configure a Zimbra account.
-
-### Admin settings
-
-There also is a "Connected accounts" **admin** settings section if you want to allow
-your Nextcloud users to use OAuth to authenticate to a specific Zimbra instance.

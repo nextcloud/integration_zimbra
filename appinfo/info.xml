@@ -3,7 +3,11 @@
 	<id>integration_zimbra</id>
 	<name>Zimbra integration</name>
 	<summary>Integration of Zimbra</summary>
-	<description><![CDATA[Zimbra integration into Nextcloud]]></description>
+	<description><![CDATA[Zimbra integration into Nextcloud provides a dashboard widget for unread emails,
+ one for upcoming events, a search provider for emails and the ability so search for Zimbra contacts in Nextcloud.
+
+Nextcloud will suggest your Zimbra contacts addresses when you search for a contact via the top-right contacts menu
+or when you search for someone to share a file to.]]></description>
 	<version>1.0.0</version>
 	<licence>agpl</licence>
 	<author>Julien Veyssier</author>
@@ -21,8 +25,8 @@
 		<nextcloud min-version="22" max-version="25"/>
 	</dependencies>
 	<settings>
-		<admin>OCA\Zimbra\Settings\Admin</admin>
-		<admin-section>OCA\Zimbra\Settings\AdminSection</admin-section>
+		<!--admin>OCA\Zimbra\Settings\Admin</admin>
+		<admin-section>OCA\Zimbra\Settings\AdminSection</admin-section-->
 		<personal>OCA\Zimbra\Settings\Personal</personal>
 		<personal-section>OCA\Zimbra\Settings\PersonalSection</personal-section>
 	</settings>
