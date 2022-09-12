@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 1.0.1 – 2022-09-12
+### Changed
+- Open navigation item in new tab
+
 ## 1.0.0 – 2022-09-12
 ### Added
 * the app
