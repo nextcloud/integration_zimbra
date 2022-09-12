@@ -110,6 +110,7 @@ class Application extends App implements IBootstrap {
 						'href' => $zimbraUrl,
 						'icon' => $urlGenerator->imagePath(self::APP_ID, 'app.svg'),
 						'name' => $l10n->t('Zimbra'),
+						'target' => '_blank',
 					];
 				});
 			}
