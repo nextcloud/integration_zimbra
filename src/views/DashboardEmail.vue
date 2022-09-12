@@ -15,7 +15,7 @@
 				:sub-text="item.subText">
 				<template #avatar>
 					<Avatar :size="44"
-						icon-class="icon-mail-dark icon-mail-fff">
+						icon-class="icon-mail-dark icon-mail-fff icon-mail">
 						<!-- FOR NEW @NC/VUE template #icon>
 							<MailIcon />
 						</template-->
