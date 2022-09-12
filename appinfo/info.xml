@@ -22,7 +22,7 @@ or when you search for someone to share a file to.]]></description>
 	<screenshot>https://github.com/eneiluj/integration_zimbra/raw/master/img/screenshot1.jpg</screenshot>
 	<screenshot>https://github.com/eneiluj/integration_zimbra/raw/master/img/screenshot2.jpg</screenshot>
 	<dependencies>
-		<nextcloud min-version="22" max-version="25"/>
+		<nextcloud min-version="25" max-version="26"/>
 	</dependencies>
 	<settings>
 		<!--admin>OCA\Zimbra\Settings\Admin</admin>

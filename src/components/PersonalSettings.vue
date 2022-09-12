@@ -63,36 +63,37 @@
 				<span />
 			</div>
 			<br>
-			<CheckboxRadioSwitch v-if="connected"
+			<NcCheckboxRadioSwitch v-if="connected"
 				class="field"
 				:checked.sync="state.search_mails_enabled"
 				@update:checked="onSearchChange">
 				{{ t('integration_zimbra', 'Enable searching for emails') }}
-			</CheckboxRadioSwitch>
+			</NcCheckboxRadioSwitch>
 			<br>
 			<p v-if="connected && state.search_mails_enabled" class="settings-hint">
-				<InformationVariantIcon :size="24" class="icon" />
+				<InformationOutlineIcon :size="24" class="icon" />
 				{{ t('integration_zimbra', 'Warning, everything you type in the search bar will be sent to Zimbra.') }}
 			</p>
-			<CheckboxRadioSwitch
+			<NcCheckboxRadioSwitch
 				class="field"
 				:checked.sync="state.navigation_enabled"
 				@update:checked="onNavigationChange">
 				{{ t('integration_zimbra', 'Enable navigation link (link to your Zimbra instance in the navigation menu)') }}
-			</CheckboxRadioSwitch>
+			</NcCheckboxRadioSwitch>
 		</div>
 	</div>
 </template>
 
 <script>
-import InformationVariantIcon from 'vue-material-design-icons/InformationVariant.vue'
+import InformationOutlineIcon from 'vue-material-design-icons/InformationOutline.vue'
 import EarthIcon from 'vue-material-design-icons/Earth.vue'
 import LockIcon from 'vue-material-design-icons/Lock.vue'
 import AccountIcon from 'vue-material-design-icons/Account.vue'
 import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
 import CloseIcon from 'vue-material-design-icons/Close.vue'
-import NcButton from '@nextcloud/vue/dist/Components/Button.js'
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
@@ -107,10 +108,10 @@ export default {
 	components: {
 		ZimbraIcon,
 		NcButton,
-		CheckboxRadioSwitch,
+		NcCheckboxRadioSwitch,
 		OpenInNewIcon,
 		CloseIcon,
-		InformationVariantIcon,
+		InformationOutlineIcon,
 		EarthIcon,
 		AccountIcon,
 		LockIcon,
@@ -252,10 +253,13 @@ export default {
 
 <style scoped lang="scss">
 #zimbra_prefs {
+	#zimbra-content {
+		margin-left: 30px;
+	}
+
 	.field {
 		display: flex;
 		align-items: center;
-		margin-left: 30px;
 
 		input,
 		label {
@@ -275,6 +279,9 @@ export default {
 	.settings-hint {
 		display: flex;
 		align-items: center;
+		.icon {
+			margin-right: 4px;
+		}
 	}
 
 	h2 {
