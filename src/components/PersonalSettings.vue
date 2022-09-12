@@ -4,12 +4,6 @@
 			<ZimbraIcon class="icon" />
 			{{ t('integration_zimbra', 'Zimbra integration') }}
 		</h2>
-		<CheckboxRadioSwitch
-			class="field"
-			:checked.sync="state.navigation_enabled"
-			@update:checked="onNavigationChange">
-			{{ t('integration_zimbra', 'Enable navigation link') }}
-		</CheckboxRadioSwitch>
 		<div id="zimbra-content">
 			<div class="field">
 				<label for="zimbra-url">
@@ -80,6 +74,12 @@
 				<InformationVariantIcon :size="24" class="icon" />
 				{{ t('integration_zimbra', 'Warning, everything you type in the search bar will be sent to Zimbra.') }}
 			</p>
+			<CheckboxRadioSwitch
+				class="field"
+				:checked.sync="state.navigation_enabled"
+				@update:checked="onNavigationChange">
+				{{ t('integration_zimbra', 'Enable navigation link (link to your Zimbra instance in the navigation menu)') }}
+			</CheckboxRadioSwitch>
 		</div>
 	</div>
 </template>
