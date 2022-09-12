@@ -14,17 +14,16 @@
 				:main-text="item.mainText"
 				:sub-text="item.subText">
 				<template #avatar>
-					<Avatar :size="44"
-						icon-class="icon-calendar-dark icon-calendar-fff">
-						<!-- FOR NEW @NC/VUE template #icon>
+					<NcAvatar :size="44">
+						<template #icon>
 							<CalendarIcon />
-						</template-->
-					</Avatar>
+						</template>
+					</NcAvatar>
 				</template>
 			</DashboardWidgetItem>
 		</template>
 		<template #empty-content>
-			<EmptyContent
+			<NcEmptyContent
 				v-if="emptyContentMessage"
 				:icon="emptyContentIcon">
 				<template #desc>
@@ -48,7 +47,7 @@
 						</NcButton>
 					</div>
 				</template>
-			</EmptyContent>
+			</NcEmptyContent>
 		</template>
 	</DashboardWidget>
 </template>
@@ -60,12 +59,12 @@ import { DashboardWidget, DashboardWidgetItem } from '@nextcloud/vue-dashboard'
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import moment from '@nextcloud/moment'
-import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent.js'
-import NcButton from '@nextcloud/vue/dist/Components/Button.js'
-import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import LoginVariantIcon from 'vue-material-design-icons/LoginVariant.vue'
-// import CalendarIcon from 'vue-material-design-icons/Calendar'
+import CalendarIcon from 'vue-material-design-icons/Calendar.vue'
 
 import { oauthConnect, oauthConnectConfirmDialog } from '../utils.js'
 
@@ -75,11 +74,11 @@ export default {
 	components: {
 		DashboardWidget,
 		DashboardWidgetItem,
-		EmptyContent,
+		NcEmptyContent,
 		NcButton,
-		Avatar,
+		NcAvatar,
 		LoginVariantIcon,
-		// CalendarIcon,
+		CalendarIcon,
 	},
 
 	props: {

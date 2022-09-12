@@ -14,17 +14,16 @@
 				:main-text="item.mainText"
 				:sub-text="item.subText">
 				<template #avatar>
-					<Avatar :size="44"
-						icon-class="icon-mail-dark icon-mail-fff icon-mail">
-						<!-- FOR NEW @NC/VUE template #icon>
-							<MailIcon />
-						</template-->
-					</Avatar>
+					<NcAvatar :size="44">
+						<template #icon>
+							<EmailOutlineIcon />
+						</template>
+					</NcAvatar>
 				</template>
 			</DashboardWidgetItem>
 		</template>
 		<template #empty-content>
-			<EmptyContent
+			<NcEmptyContent
 				v-if="emptyContentMessage"
 				:icon="emptyContentIcon">
 				<template #desc>
@@ -48,7 +47,7 @@
 						</NcButton>
 					</div>
 				</template>
-			</EmptyContent>
+			</NcEmptyContent>
 		</template>
 	</DashboardWidget>
 </template>
@@ -60,11 +59,11 @@ import { DashboardWidget, DashboardWidgetItem } from '@nextcloud/vue-dashboard'
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import moment from '@nextcloud/moment'
-import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import LoginVariantIcon from 'vue-material-design-icons/LoginVariant.vue'
-import NcButton from '@nextcloud/vue/dist/Components/Button.js'
-import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
-// import MailIcon from 'vue-material-design-icons/Mail.vue'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
+import EmailOutlineIcon from 'vue-material-design-icons/EmailOutline.vue'
 
 import { oauthConnect, oauthConnectConfirmDialog } from '../utils.js'
 
@@ -74,11 +73,11 @@ export default {
 	components: {
 		DashboardWidget,
 		DashboardWidgetItem,
-		EmptyContent,
+		NcEmptyContent,
 		NcButton,
 		LoginVariantIcon,
-		Avatar,
-		// MailIcon,
+		NcAvatar,
+		EmailOutlineIcon,
 	},
 
 	props: {
