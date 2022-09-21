@@ -17,8 +17,10 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use OCA\Zimbra\AppInfo\Application;
 use OCP\App\IAppManager;
+use OCP\Http\Client\IClient;
 use OCP\IConfig;
 use OCP\IL10N;
+use OCP\PreConditionNotMetException;
 use Psr\Log\LoggerInterface;
 use OCP\Http\Client\IClientService;
 use Throwable;
@@ -37,17 +39,13 @@ class ZimbraAPIService {
 	 */
 	private $l10n;
 	/**
-	 * @var \OCP\Http\Client\IClient
+	 * @var IClient
 	 */
 	private $client;
 	/**
 	 * @var IConfig
 	 */
 	private $config;
-	/**
-	 * @var IAppManager
-	 */
-	private $appManager;
 	/**
 	 * @var string
 	 */
@@ -67,7 +65,6 @@ class ZimbraAPIService {
 		$this->l10n = $l10n;
 		$this->client = $clientService->newClient();
 		$this->config = $config;
-		$this->appManager = $appManager;
 		$this->appVersion = $appManager->getAppVersion(Application::APP_ID);
 	}
 
@@ -199,6 +196,7 @@ class ZimbraAPIService {
 
 	/**
 	 * @param string $userId
+	 * @param string $query
 	 * @param int $offset
 	 * @param int $limit
 	 * @return array
@@ -222,27 +220,6 @@ class ZimbraAPIService {
 
 	/**
 	 * @param string $userId
-	 * @param string $zimbraUserId
-	 * @param string $zimbraUrl
-	 * @return array
-	 * @throws Exception
-	 */
-	public function getUserAvatar(string $userId, string $zimbraUserId, string $zimbraUrl): array {
-		$image = $this->request($userId, $zimbraUrl, 'users/' . $zimbraUserId . '/image', [], 'GET', false);
-		if (!is_array($image)) {
-			return ['avatarContent' => $image];
-		}
-		$image = $this->request($userId, $zimbraUrl, 'users/' . $zimbraUserId . '/image/default', [], 'GET', false);
-		if (!is_array($image)) {
-			return ['avatarContent' => $image];
-		}
-
-		$userInfo = $this->request($userId, $zimbraUrl, 'users/' . $zimbraUserId);
-		return ['userInfo' => $userInfo];
-	}
-
-	/**
-	 * @param string $userId
 	 * @param string $endPoint
 	 * @param array $params
 	 * @param string $method
@@ -254,7 +231,6 @@ class ZimbraAPIService {
 								bool $jsonResponse = true) {
 		$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
-		$this->checkTokenExpiration($userId, $url);
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		try {
 			$url = $url . '/' . $endPoint;
@@ -285,9 +261,9 @@ class ZimbraAPIService {
 							unset($params[$key]);
 						}
 					}
+					$paramsContent .= http_build_query(array_merge($params, $extraGetParams));
+					$url .= '?' . $paramsContent;
 				}
-				$paramsContent .= http_build_query(array_merge($params, $extraGetParams));
-				$url .= '?' . $paramsContent;
 			} else {
 				if (count($params) > 0) {
 					$options['json'] = $params;
@@ -352,18 +328,17 @@ class ZimbraAPIService {
 
 	/**
 	 * @param string $userId
-	 * @param string $endPoint
+	 * @param string $function
+	 * @param string $ns
 	 * @param array $params
-	 * @param string $method
 	 * @param bool $jsonResponse
 	 * @return array|mixed|resource|string|string[]
-	 * @throws Exception
+	 * @throws PreConditionNotMetException
 	 */
 	public function soapRequest(string $userId, string $function, string $ns, array $params = [],
 							bool $jsonResponse = true) {
 		$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
-		$this->checkTokenExpiration($userId, $url);
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		$zimbraUserName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
 		try {
@@ -423,120 +398,6 @@ class ZimbraAPIService {
 
 	/**
 	 * @param string $userId
-	 * @param string $url
-	 * @return void
-	 * @throws \OCP\PreConditionNotMetException
-	 */
-	private function checkTokenExpiration(string $userId, string $url): void {
-		$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
-		$expireAt = $this->config->getUserValue($userId, Application::APP_ID, 'token_expires_at');
-		if ($refreshToken !== '' && $expireAt !== '') {
-			$nowTs = (new Datetime())->getTimestamp();
-			$expireAt = (int) $expireAt;
-			// if token expires in less than a minute or is already expired
-			if ($nowTs > $expireAt - 60) {
-				$this->refreshToken($userId, $url);
-			}
-		}
-	}
-
-	/**
-	 * @param string $userId
-	 * @param string $url
-	 * @return bool
-	 * @throws \OCP\PreConditionNotMetException
-	 */
-	private function refreshToken(string $userId, string $url): bool {
-		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
-		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
-		$redirect_uri = $this->config->getUserValue($userId, Application::APP_ID, 'redirect_uri');
-		$refreshToken = $this->config->getUserValue($userId, Application::APP_ID, 'refresh_token');
-		if (!$refreshToken) {
-			$this->logger->error('No Zimbra refresh token found', ['app' => $this->appName]);
-			return false;
-		}
-		$result = $this->requestOAuthAccessToken($url, [
-			'client_id' => $clientID,
-			'client_secret' => $clientSecret,
-			'grant_type' => 'refresh_token',
-			'redirect_uri' => $redirect_uri,
-			'refresh_token' => $refreshToken,
-		], 'POST');
-		if (isset($result['access_token'])) {
-			$this->logger->info('Zimbra access token successfully refreshed', ['app' => $this->appName]);
-			$accessToken = $result['access_token'];
-			$refreshToken = $result['refresh_token'];
-			$this->config->setUserValue($userId, Application::APP_ID, 'token', $accessToken);
-			$this->config->setUserValue($userId, Application::APP_ID, 'refresh_token', $refreshToken);
-			if (isset($result['expires_in'])) {
-				$nowTs = (new Datetime())->getTimestamp();
-				$expiresAt = $nowTs + (int) $result['expires_in'];
-				$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', $expiresAt);
-			}
-			return true;
-		} else {
-			// impossible to refresh the token
-			$this->logger->error(
-				'Token is not valid anymore. Impossible to refresh it. '
-					. $result['error'] . ' '
-					. $result['error_description'] ?? '[no error description]',
-				['app' => $this->appName]
-			);
-			return false;
-		}
-	}
-
-	/**
-	 * @param string $url
-	 * @param array $params
-	 * @param string $method
-	 * @return array
-	 */
-	public function requestOAuthAccessToken(string $url, array $params = [], string $method = 'GET'): array {
-		try {
-			$url = $url . '/oauth/access_token';
-			$options = [
-				'headers' => [
-					'User-Agent'  => Application::INTEGRATION_USER_AGENT,
-				]
-			];
-
-			if (count($params) > 0) {
-				if ($method === 'GET') {
-					$paramsContent = http_build_query($params);
-					$url .= '?' . $paramsContent;
-				} else {
-					$options['body'] = $params;
-				}
-			}
-
-			if ($method === 'GET') {
-				$response = $this->client->get($url, $options);
-			} else if ($method === 'POST') {
-				$response = $this->client->post($url, $options);
-			} else if ($method === 'PUT') {
-				$response = $this->client->put($url, $options);
-			} else if ($method === 'DELETE') {
-				$response = $this->client->delete($url, $options);
-			} else {
-				return ['error' => $this->l10n->t('Bad HTTP method')];
-			}
-			$body = $response->getBody();
-			$respCode = $response->getStatusCode();
-
-			if ($respCode >= 400) {
-				return ['error' => $this->l10n->t('OAuth access token refused')];
-			} else {
-				return json_decode($body, true);
-			}
-		} catch (Exception $e) {
-			$this->logger->warning('Zimbra OAuth error : '.$e->getMessage(), array('app' => $this->appName));
-			return ['error' => $e->getMessage()];
-		}
-	}
-
-	/**
-	 * @param string $baseUrl
 	 * @param string $login
 	 * @param string $password
 	 * @return array

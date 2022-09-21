@@ -31,8 +31,7 @@
 				</template>
 				<template #action>
 					<div v-if="widgetState === 'no-token' || widgetState === 'error'" class="connect-button">
-						<a v-if="!initialState.oauth_is_possible"
-							:href="settingsUrl">
+						<a :href="settingsUrl">
 							<NcButton>
 								<template #icon>
 									<LoginVariantIcon />
@@ -40,13 +39,6 @@
 								{{ t('integration_zimbra', 'Connect to Zimbra') }}
 							</NcButton>
 						</a>
-						<NcButton v-else
-							@click="onOauthClick">
-							<template #icon>
-								<LoginVariantIcon />
-							</template>
-							{{ t('integration_zimbra', 'Connect to Zimbra') }}
-						</NcButton>
 					</div>
 				</template>
 			</NcEmptyContent>
@@ -71,8 +63,6 @@ import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import moment from '@nextcloud/moment'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
-
-import { oauthConnect, oauthConnectConfirmDialog } from '../utils.js'
 
 export default {
 	name: 'DashboardEmail',
@@ -178,21 +168,6 @@ export default {
 	},
 
 	methods: {
-		onOauthClick() {
-			oauthConnectConfirmDialog(this.zimbraUrl).then((result) => {
-				if (result) {
-					if (this.initialState.use_popup) {
-						oauthConnect(this.zimbraUrl, this.initialState.client_id, null, true)
-							.then((data) => {
-								this.stopLoop()
-								this.launchLoop()
-							})
-					} else {
-						oauthConnect(this.zimbraUrl, this.initialState.client_id, 'dashboard')
-					}
-				}
-			})
-		},
 		changeWindowVisibility() {
 			this.windowVisibility = !document.hidden
 		},

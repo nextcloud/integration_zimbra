@@ -104,18 +104,11 @@ class ZimbraEventWidget implements IWidget {
 	 * @inheritDoc
 	 */
 	public function load(): void {
-		$clientID = $this->config->getAppValue(Application::APP_ID, 'client_id');
-		$clientSecret = $this->config->getAppValue(Application::APP_ID, 'client_secret');
 		$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
 		$userZimbraUrl = $this->config->getUserValue($this->userId, Application::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
-		$oauthPossible = $clientID !== '' && $clientSecret !== '' && $userZimbraUrl === $adminOauthUrl;
-		$usePopup = $this->config->getAppValue(Application::APP_ID, 'use_popup', '0');
 
 		$userConfig = [
-			'oauth_is_possible' => $oauthPossible,
-			'use_popup' => ($usePopup === '1'),
 			'url' => $userZimbraUrl,
-			'client_id' => $clientID,
 		];
 		$this->initialStateService->provideInitialState('zimbra-event-config', $userConfig);
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-dashboardEvent');

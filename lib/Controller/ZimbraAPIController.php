@@ -11,9 +11,8 @@
 
 namespace OCA\Zimbra\Controller;
 
+use Exception;
 use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\DataDisplayResponse;
-use OCP\AppFramework\Http\RedirectResponse;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http\DataResponse;
@@ -21,7 +20,6 @@ use OCP\AppFramework\Controller;
 
 use OCA\Zimbra\Service\ZimbraAPIService;
 use OCA\Zimbra\AppInfo\Application;
-use OCP\IURLGenerator;
 
 class ZimbraAPIController extends Controller {
 
@@ -37,60 +35,24 @@ class ZimbraAPIController extends Controller {
 	 * @var string|null
 	 */
 	private $userId;
-	/**
-	 * @var string
-	 */
-	private $zimbraUrl;
-	/**
-	 * @var IURLGenerator
-	 */
-	private $urlGenerator;
 
 	public function __construct(string $appName,
 								IRequest $request,
 								IConfig $config,
-								IURLGenerator $urlGenerator,
 								ZimbraAPIService $zimbraAPIService,
 								?string $userId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
 		$this->zimbraAPIService = $zimbraAPIService;
 		$this->userId = $userId;
-		$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
-		$this->zimbraUrl = $this->config->getUserValue($this->userId, Application::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
-		$this->urlGenerator = $urlGenerator;
-	}
-
-	/**
-	 * get zimbra user avatar
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 *
-	 * @param string $userId
-	 * @param int $useFallback
-	 * @return DataDisplayResponse|RedirectResponse
-	 * @throws \Exception
-	 */
-	public function getUserAvatar(string $userId, int $useFallback = 1) {
-		$result = $this->zimbraAPIService->getUserAvatar($this->userId, $userId, $this->zimbraUrl);
-		if (isset($result['avatarContent'])) {
-			$response = new DataDisplayResponse($result['avatarContent']);
-			$response->cacheFor(60 * 60 * 24);
-			return $response;
-		} elseif ($useFallback !== 0 && isset($result['userInfo'])) {
-			$userName = $result['userInfo']['username'] ?? '??';
-			$fallbackAvatarUrl = $this->urlGenerator->linkToRouteAbsolute('core.GuestAvatar.getAvatar', ['guestName' => $userName, 'size' => 44]);
-			return new RedirectResponse($fallbackAvatarUrl);
-		}
-		return new DataDisplayResponse('', Http::STATUS_NOT_FOUND);
 	}
 
 	/**
 	 * @NoAdminRequired
 	 * @return DataResponse
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	public function getContacts() {
+	public function getContacts(): DataResponse {
 		$zimbraUserName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name');
 		if ($zimbraUserName === '') {
 			return new DataResponse('not connected', Http::STATUS_BAD_REQUEST);
@@ -105,10 +67,12 @@ class ZimbraAPIController extends Controller {
 
 	/**
 	 * @NoAdminRequired
+	 * @param int $offset
+	 * @param int $limit
 	 * @return DataResponse
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	public function getUnreadEmails(int $offset = 0, int $limit = 10) {
+	public function getUnreadEmails(int $offset = 0, int $limit = 10): DataResponse {
 		$zimbraUserName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name');
 		if ($zimbraUserName === '') {
 			return new DataResponse('not connected', Http::STATUS_BAD_REQUEST);
@@ -124,9 +88,9 @@ class ZimbraAPIController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 * @return DataResponse
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	public function getUpcomingEvents() {
+	public function getUpcomingEvents(): DataResponse {
 		$zimbraUserName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name');
 		if ($zimbraUserName === '') {
 			return new DataResponse('not connected', Http::STATUS_BAD_REQUEST);

@@ -98,7 +98,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
-import { delay, oauthConnect } from '../utils.js'
+import { delay } from '../utils.js'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import ZimbraIcon from './icons/ZimbraIcon.vue'
 
@@ -123,16 +123,12 @@ export default {
 		return {
 			state: loadState('integration_zimbra', 'user-config'),
 			loading: false,
-			redirect_uri: window.location.protocol + '//' + window.location.host + generateUrl('/apps/integration_zimbra/oauth-redirect'),
 			login: '',
 			password: '',
 		}
 	},
 
 	computed: {
-		showOAuth() {
-			return (this.state.url === this.state.oauth_instance_url) && this.state.client_id && this.state.client_secret
-		},
 		connected() {
 			return !!this.state.token && !!this.state.url && !!this.state.user_name
 		},
@@ -140,7 +136,7 @@ export default {
 			return this.state.user_displayname + ' (' + this.state.user_name + ')'
 		},
 		showLoginPassword() {
-			return !this.showOAuth && !this.connected
+			return !this.connected
 		},
 	},
 
@@ -221,9 +217,7 @@ export default {
 			})
 		},
 		onConnectClick() {
-			if (this.showOAuth) {
-				this.connectWithOauth()
-			} else if (this.login && this.password) {
+			if (this.login && this.password) {
 				this.connectWithCredentials()
 			}
 		},
@@ -234,18 +228,6 @@ export default {
 				password: this.password,
 				url: this.state.url,
 			})
-		},
-		connectWithOauth() {
-			if (this.state.use_popup) {
-				oauthConnect(this.state.url, this.state.client_id, null, true)
-					.then((data) => {
-						this.state.token = 'dummyToken'
-						this.state.user_name = data.userName
-						this.state.user_displayname = data.userDisplayName
-					})
-			} else {
-				oauthConnect(this.state.url, this.state.client_id, 'settings')
-			}
 		},
 	},
 }
