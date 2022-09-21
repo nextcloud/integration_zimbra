@@ -61,8 +61,8 @@ class ZimbraAddressBook implements IAddressBook {
 	}
 
 	public function getUri(): string {
-		$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
-		return $this->config->getUserValue($this->userId, Application::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
+		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
+		return $this->config->getUserValue($this->userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 	}
 
 	public function getDisplayName() {

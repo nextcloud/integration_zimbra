@@ -69,8 +69,8 @@ class ZimbraAPIService {
 	}
 
 	public function isUserConnected(string $userId): bool {
-		$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
-		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
+		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
+		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 
 		$userName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
 		$token = $this->config->getUserValue($userId, Application::APP_ID, 'token');
@@ -228,9 +228,9 @@ class ZimbraAPIService {
 	 * @throws Exception
 	 */
 	public function restRequest(string $userId, string $endPoint, array $params = [], string $method = 'GET',
-								bool $jsonResponse = true) {
-		$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
-		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
+								bool $jsonResponse = true): array {
+		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
+		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		try {
 			$url = $url . '/' . $endPoint;
@@ -321,7 +321,7 @@ class ZimbraAPIService {
 			}
 			return ['error' => $e->getMessage()];
 		} catch (ServerException $e) {
-			$this->logger->debug('Zimbra API error : '.$e->getMessage(), ['app' => $this->appName]);
+			$this->logger->debug('Zimbra API error : ' . $e->getMessage(), ['app' => $this->appName]);
 			return ['error' => $e->getMessage()];
 		}
 	}
@@ -332,13 +332,13 @@ class ZimbraAPIService {
 	 * @param string $ns
 	 * @param array $params
 	 * @param bool $jsonResponse
-	 * @return array|mixed|resource|string|string[]
+	 * @return array
 	 * @throws PreConditionNotMetException
 	 */
 	public function soapRequest(string $userId, string $function, string $ns, array $params = [],
-							bool $jsonResponse = true) {
-		$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
-		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
+								bool $jsonResponse = true): array {
+		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
+		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
 		$zimbraUserName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
 		try {
@@ -365,7 +365,10 @@ class ZimbraAPIService {
 				if ($jsonResponse) {
 					return json_decode($body, true);
 				} else {
-					return $body;
+					return [
+						'body' => $body,
+						'headers' => $response->getHeaders(),
+					];
 				}
 			}
 		} catch (ClientException $e) {
@@ -403,8 +406,8 @@ class ZimbraAPIService {
 	 * @return array
 	 */
 	public function login(string $userId, string $login, string $password): array {
-		$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
-		$baseUrl = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
+		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
+		$baseUrl = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 		try {
 			$url = $baseUrl . '/service/soap';
 			$options = [

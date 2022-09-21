@@ -25,8 +25,8 @@ or when you search for someone to share a file to.]]></description>
 		<nextcloud min-version="22" max-version="26"/>
 	</dependencies>
 	<settings>
-		<!--admin>OCA\Zimbra\Settings\Admin</admin>
-		<admin-section>OCA\Zimbra\Settings\AdminSection</admin-section-->
+		<admin>OCA\Zimbra\Settings\Admin</admin>
+		<admin-section>OCA\Zimbra\Settings\AdminSection</admin-section>
 		<personal>OCA\Zimbra\Settings\Personal</personal>
 		<personal-section>OCA\Zimbra\Settings\PersonalSection</personal-section>
 	</settings>

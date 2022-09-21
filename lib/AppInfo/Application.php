@@ -96,8 +96,8 @@ class Application extends App implements IBootstrap {
 			$container = $this->getContainer();
 
 			if ($this->config->getUserValue($userId, self::APP_ID, 'navigation_enabled', '0') === '1') {
-				$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
-				$zimbraUrl = $this->config->getUserValue($userId, self::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
+				$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
+				$zimbraUrl = $this->config->getUserValue($userId, self::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 				if ($zimbraUrl === '') {
 					return;
 				}

@@ -10,7 +10,7 @@
 				{{ t('integration_zimbra', 'Default Zimbra server') }}
 			</label>
 			<input id="zimbra-instance"
-				v-model="state.oauth_instance_url"
+				v-model="state.admin_instance_url"
 				type="text"
 				placeholder="https://..."
 				@input="onInput">
@@ -29,14 +29,11 @@ import axios from '@nextcloud/axios'
 import { delay } from '../utils.js'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
-
 export default {
 	name: 'AdminSettings',
 
 	components: {
 		ZimbraIcon,
-		CheckboxRadioSwitch,
 		EarthIcon,
 	},
 
@@ -57,13 +54,10 @@ export default {
 	},
 
 	methods: {
-		onUsePopupChanged(newValue) {
-			this.saveOptions({ use_popup: newValue ? '1' : '0' })
-		},
 		onInput() {
 			delay(() => {
 				this.saveOptions({
-					oauth_instance_url: this.state.oauth_instance_url,
+					admin_instance_url: this.state.admin_instance_url,
 				})
 			}, 2000)()
 		},

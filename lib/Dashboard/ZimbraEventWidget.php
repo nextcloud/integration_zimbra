@@ -104,11 +104,11 @@ class ZimbraEventWidget implements IWidget {
 	 * @inheritDoc
 	 */
 	public function load(): void {
-		$adminOauthUrl = $this->config->getAppValue(Application::APP_ID, 'oauth_instance_url');
-		$userZimbraUrl = $this->config->getUserValue($this->userId, Application::APP_ID, 'url', $adminOauthUrl) ?: $adminOauthUrl;
+		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
+		$userUrl = $this->config->getUserValue($this->userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 
 		$userConfig = [
-			'url' => $userZimbraUrl,
+			'url' => $userUrl,
 		];
 		$this->initialStateService->provideInitialState('zimbra-event-config', $userConfig);
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-dashboardEvent');
