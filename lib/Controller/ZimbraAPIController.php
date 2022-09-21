@@ -69,6 +69,7 @@ class ZimbraAPIController extends Controller {
 	 * @param string $userId
 	 * @param int $useFallback
 	 * @return DataDisplayResponse|RedirectResponse
+	 * @throws \Exception
 	 */
 	public function getUserAvatar(string $userId, int $useFallback = 1) {
 		$result = $this->zimbraAPIService->getUserAvatar($this->userId, $userId, $this->zimbraUrl);
@@ -85,7 +86,9 @@ class ZimbraAPIController extends Controller {
 	}
 
 	/**
+	 * @NoAdminRequired
 	 * @return DataResponse
+	 * @throws \Exception
 	 */
 	public function getContacts() {
 		$zimbraUserName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name');
@@ -101,7 +104,9 @@ class ZimbraAPIController extends Controller {
 	}
 
 	/**
+	 * @NoAdminRequired
 	 * @return DataResponse
+	 * @throws \Exception
 	 */
 	public function getUnreadEmails(int $offset = 0, int $limit = 10) {
 		$zimbraUserName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name');
@@ -117,7 +122,9 @@ class ZimbraAPIController extends Controller {
 	}
 
 	/**
+	 * @NoAdminRequired
 	 * @return DataResponse
+	 * @throws \Exception
 	 */
 	public function getUpcomingEvents() {
 		$zimbraUserName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_name');

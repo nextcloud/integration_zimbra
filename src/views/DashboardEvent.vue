@@ -25,9 +25,11 @@
 		<template #empty-content>
 			<NcEmptyContent
 				v-if="emptyContentMessage"
-				:icon="emptyContentIcon">
-				<template #desc>
-					{{ emptyContentMessage }}
+				:title="emptyContentMessage">
+				<template #icon>
+					<component :is="emptyContentIcon" />
+				</template>
+				<template #action>
 					<div v-if="widgetState === 'no-token' || widgetState === 'error'" class="connect-button">
 						<a v-if="!initialState.oauth_is_possible"
 							:href="settingsUrl">
@@ -53,6 +55,13 @@
 </template>
 
 <script>
+import CloseIcon from 'vue-material-design-icons/Close.vue'
+import CheckIcon from 'vue-material-design-icons/Check.vue'
+import LoginVariantIcon from 'vue-material-design-icons/LoginVariant.vue'
+import CalendarIcon from 'vue-material-design-icons/Calendar.vue'
+
+import ZimbraIcon from '../components/icons/ZimbraIcon.vue'
+
 import axios from '@nextcloud/axios'
 import { generateUrl, imagePath } from '@nextcloud/router'
 import { DashboardWidget, DashboardWidgetItem } from '@nextcloud/vue-dashboard'
@@ -62,9 +71,6 @@ import moment from '@nextcloud/moment'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
-
-import LoginVariantIcon from 'vue-material-design-icons/LoginVariant.vue'
-import CalendarIcon from 'vue-material-design-icons/Calendar.vue'
 
 import { oauthConnect, oauthConnectConfirmDialog } from '../utils.js'
 
@@ -139,13 +145,13 @@ export default {
 		},
 		emptyContentIcon() {
 			if (this.widgetState === 'no-token') {
-				return 'icon-zimbra'
+				return ZimbraIcon
 			} else if (this.widgetState === 'error') {
-				return 'icon-close'
+				return CloseIcon
 			} else if (this.widgetState === 'ok') {
-				return 'icon-checkmark'
+				return CheckIcon
 			}
-			return 'icon-checkmark'
+			return CheckIcon
 		},
 	},
 
