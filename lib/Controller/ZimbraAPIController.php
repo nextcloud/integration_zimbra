@@ -85,6 +85,8 @@ class ZimbraAPIController extends Controller {
 	}
 
 	/**
+	 * @NoAdminRequired
+	 *
 	 * @return DataResponse
 	 */
 	public function getContacts() {
@@ -101,6 +103,8 @@ class ZimbraAPIController extends Controller {
 	}
 
 	/**
+	 * @NoAdminRequired
+	 *
 	 * @return DataResponse
 	 */
 	public function getUnreadEmails(int $offset = 0, int $limit = 10) {
@@ -117,6 +121,8 @@ class ZimbraAPIController extends Controller {
 	}
 
 	/**
+	 * @NoAdminRequired
+	 *
 	 * @return DataResponse
 	 */
 	public function getUpcomingEvents() {
