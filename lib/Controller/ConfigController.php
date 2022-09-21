@@ -73,6 +73,7 @@ class ConfigController extends Controller {
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'token');
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'login');
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'password');
+				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'zimbra_version');
 				$result['user_id'] = '';
 				$result['user_name'] = '';
 				$result['user_displayname'] = '';
@@ -105,7 +106,7 @@ class ConfigController extends Controller {
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'token', $result['token']);
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_name', $login);
 			// get user info
-			$infoReqResp = $this->zimbraAPIService->soapRequest($this->userId, 'GetInfoRequest', 'urn:zimbraAccount');
+			$infoReqResp = $this->zimbraAPIService->soapRequest($this->userId, 'GetInfoRequest', 'urn:zimbraAccount', ['rights' => '', 'sections' => 'attrs']);
 			$userInfo = $infoReqResp['Body']['GetInfoResponse'] ?? [];
 			$zUserId = $userInfo['id'] ?? $login;
 			$zUserName = $userInfo['name'] ?? $login;
@@ -113,6 +114,7 @@ class ConfigController extends Controller {
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_id', $zUserId);
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_name', $zUserName);
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_displayname', $zUserDisplayName);
+			$this->config->setUserValue($this->userId, Application::APP_ID, 'zimbra_version', $userInfo['version'] ?? '');
 			return new DataResponse([
 				'user_id' => $zUserId,
 				'user_name' => $zUserName,
