@@ -15,3 +15,7 @@ There, you can choose a Zimbra server address and enter your credentials to conn
 
 A link to the "Connected accounts" user settings section will be displayed in the widget
 for users who didn't configure a Zimbra account.
+
+### Admin settings
+
+You can set a default Zimbra server address in the the "Connected accounts" admin settings section.
