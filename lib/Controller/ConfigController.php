@@ -57,7 +57,8 @@ class ConfigController extends Controller {
 	public function setConfig(array $values): DataResponse {
 		if (isset($values['url'], $values['login'], $values['password'])) {
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'url', $values['url']);
-			return $this->loginWithCredentials($values['login'], $values['password']);
+			$secondFactor = ($values['two_factor_code'] ?? null) ?: null;
+			return $this->loginWithCredentials($values['login'], $values['password'], $secondFactor);
 		}
 
 		foreach ($values as $key => $value) {
@@ -88,16 +89,28 @@ class ConfigController extends Controller {
 	/**
 	 * @param string $login
 	 * @param string $password
+	 * @param string|null $twoFactorCode
 	 * @return DataResponse
 	 * @throws PreConditionNotMetException
 	 */
-	private function loginWithCredentials(string $login, string $password): DataResponse {
+	private function loginWithCredentials(string $login, string $password, ?string $twoFactorCode = null): DataResponse {
 		// cleanup refresh token and expiration date on classic login
 		$this->config->deleteUserValue($this->userId, Application::APP_ID, 'refresh_token');
 		$this->config->deleteUserValue($this->userId, Application::APP_ID, 'token_expires_at');
 
-		$result = $this->zimbraAPIService->login($this->userId, $login, $password);
+		$result = $this->zimbraAPIService->login($this->userId, $login, $password, $twoFactorCode);
 		if (isset($result['token'])) {
+			// do we need 2FA?
+			if ($result['two_factor_required'] ?? false) {
+				return new DataResponse([
+					'user_id' => '',
+					'user_name' => '',
+					'user_displayname' => '',
+					'error' => 'login response says 2fa is required',
+					'two_factor_required' => true,
+				]);
+			}
+
 			// we have to store login and password for now
 			// even if we use a token, it expires and we can only get a new one with login/password
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'login', $login);
@@ -105,6 +118,26 @@ class ConfigController extends Controller {
 
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'token', $result['token']);
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_name', $login);
+
+			/*
+			// this is how to use pre-auth to get a token without the users credentials
+			$preAuthKey = $this->config->getAppValue(Application::APP_ID, 'pre_auth_key');
+			if ($preAuthKey) {
+				$preAuthResult = $this->zimbraAPIService->preAuth($this->userId, $login);
+				if (isset($preAuthResult['token'])) {
+					$this->config->setUserValue($this->userId, Application::APP_ID, 'token', $preAuthResult['token']);
+				} else {
+					return new DataResponse([
+						'user_id' => '',
+						'user_name' => '',
+						'user_displayname' => '',
+						'error' => 'preauth failed',
+						'details' => $preAuthResult,
+					]);
+				}
+			}
+			*/
+
 			// get user info
 			$infoReqResp = $this->zimbraAPIService->soapRequest($this->userId, 'GetInfoRequest', 'urn:zimbraAccount', ['rights' => '', 'sections' => 'attrs']);
 			$userInfo = $infoReqResp['Body']['GetInfoResponse'] ?? [];
@@ -129,6 +162,8 @@ class ConfigController extends Controller {
 			'user_id' => '',
 			'user_name' => '',
 			'user_displayname' => '',
+			'error' => 'invalid login/password, no 2fa required',
+			'details' => $result,
 		]);
 	}
 

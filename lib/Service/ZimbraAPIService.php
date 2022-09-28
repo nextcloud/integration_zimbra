@@ -310,7 +310,7 @@ class ZimbraAPIService {
 				$password = $this->config->getUserValue($userId, Application::APP_ID, 'password');
 				if ($login && $password) {
 					$loginResult = $this->login($userId, $login, $password);
-					if (isset($loginResult['token'])) {
+					if (isset($loginResult['token']) && !$loginResult['two_factor_required']) {
 						$this->config->setUserValue($userId, Application::APP_ID, 'token', $loginResult['token']);
 						return $this->restRequest($userId, $endPoint, $params, $method, $jsonResponse);
 					} else {
@@ -385,7 +385,7 @@ class ZimbraAPIService {
 				$password = $this->config->getUserValue($userId, Application::APP_ID, 'password');
 				if ($login && $password) {
 					$loginResult = $this->login($userId, $login, $password);
-					if (isset($loginResult['token'])) {
+					if (isset($loginResult['token']) && !$loginResult['two_factor_required']) {
 						$this->config->setUserValue($userId, Application::APP_ID, 'token', $loginResult['token']);
 						return $this->soapRequest($userId, $function, $ns, $params, $jsonResponse);
 					} else {
@@ -403,9 +403,11 @@ class ZimbraAPIService {
 	 * @param string $userId
 	 * @param string $login
 	 * @param string $password
+	 * @param string|null $twoFactorCode
 	 * @return array
 	 */
-	public function login(string $userId, string $login, string $password): array {
+	public function login(string $userId, string $login, string $password,
+						  ?string $twoFactorCode = null): array {
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$baseUrl = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 		try {
@@ -416,14 +418,86 @@ class ZimbraAPIService {
 					'Content-Type' => 'application/json',
 				],
 			];
+			$bodyRequestParams = [
+				'account' => [
+					'_content' => $login,
+					'by' => 'name',
+				],
+				'password' => $password,
+			];
+			if ($twoFactorCode !== null) {
+				$bodyRequestParams['twoFactorCode'] = $twoFactorCode;
+			}
 			$bodyArray = [
 				'Header' => $this->getLoginRequestHeader(),
+				'Body' => $this->getRequestBody('AuthRequest', 'urn:zimbraAccount', $bodyRequestParams),
+			];
+			$options['body'] = json_encode($bodyArray);
+			$response = $this->client->post($url, $options);
+			$body = $response->getBody();
+			$respCode = $response->getStatusCode();
+
+			if ($respCode >= 400) {
+				return ['error' => $this->l10n->t('Invalid credentials')];
+			} else {
+				try {
+					$r = json_decode($body, true);
+					if (isset(
+						$r['Body'],
+						$r['Body']['AuthResponse'],
+						$r['Body']['AuthResponse']['authToken'],
+						$r['Body']['AuthResponse']['authToken'][0],
+						$r['Body']['AuthResponse']['authToken'][0]['_content']
+					)) {
+						$token = $r['Body']['AuthResponse']['authToken'][0]['_content'];
+						$twoFactorAuthRequired = $r['Body']['AuthResponse']['twoFactorAuthRequired']['_content'] ?? '';
+						return [
+							'token' => $token,
+							'two_factor_required' => $twoFactorAuthRequired === 'true',
+							//'requestBody' => $bodyArray,
+							//'responseBody' => $r,
+						];
+					}
+				} catch (Exception | Throwable $e) {
+				}
+				$this->logger->warning('Zimbra login error : Invalid response', ['app' => Application::APP_ID]);
+				return ['error' => $this->l10n->t('Invalid response')];
+			}
+		} catch (ServerException $e) {
+			$response = $e->getResponse();
+			$body = $response->getBody();
+			$this->logger->warning('Zimbra login server error : '.$body, ['app' => Application::APP_ID]);
+			return ['error' => $e->getMessage()];
+		} catch (Exception | Throwable $e) {
+			$this->logger->warning('Zimbra login error : '.$e->getMessage(), ['app' => Application::APP_ID]);
+			return ['error' => $e->getMessage()];
+		}
+	}
+
+	public function preAuth(string $userId, string $login): array {
+		$preAuthKey = $this->config->getAppValue(Application::APP_ID, 'pre_auth_key');
+		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
+		$baseUrl = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
+		try {
+			$url = $baseUrl . '/service/soap/preauth';
+			$options = [
+				'headers' => [
+					'User-Agent'  => Application::INTEGRATION_USER_AGENT,
+					'Content-Type' => 'application/json',
+				],
+			];
+			$time = round(microtime(true) * 1000);
+			$bodyArray = [
 				'Body' => $this->getRequestBody('AuthRequest', 'urn:zimbraAccount', [
 					'account' => [
 						'_content' => $login,
 						'by' => 'name',
 					],
-					'password' => $password,
+					'preauth' => [
+						'timestamp' => $time,
+						'expires' => '0',
+						'_content' => $this->hmac_sha1($preAuthKey, $login . '|name|0|' . $time),
+					],
 				]),
 			];
 			$options['body'] = json_encode($bodyArray);
@@ -450,11 +524,16 @@ class ZimbraAPIService {
 					}
 				} catch (Exception | Throwable $e) {
 				}
-				$this->logger->warning('Zimbra login error : Invalid response', ['app' => Application::APP_ID]);
+				$this->logger->warning('Zimbra preauth error : Invalid response', ['app' => Application::APP_ID]);
 				return ['error' => $this->l10n->t('Invalid response')];
 			}
+		} catch (ServerException $e) {
+			$response = $e->getResponse();
+			$body = $response->getBody();
+			$this->logger->warning('Zimbra preauth server error : '.$body, ['app' => Application::APP_ID]);
+			return ['error' => $e->getMessage()];
 		} catch (Exception | Throwable $e) {
-			$this->logger->warning('Zimbra login error : '.$e->getMessage(), ['app' => Application::APP_ID]);
+			$this->logger->warning('Zimbra preauth error : '.$e->getMessage(), ['app' => Application::APP_ID]);
 			return ['error' => $e->getMessage()];
 		}
 	}
@@ -479,6 +558,9 @@ class ZimbraAPIService {
 		];
 	}
 
+	/**
+	 * @return array[]
+	 */
 	private function getLoginRequestHeader(): array {
 		return [
 			'context' => [
@@ -491,10 +573,44 @@ class ZimbraAPIService {
 		];
 	}
 
+	/**
+	 * @param string $function
+	 * @param string $ns
+	 * @param array $params
+	 * @return array
+	 */
 	private function getRequestBody(string $function, string $ns, array $params): array {
 		$nsArray = ['_jsns' => $ns];
 		return [
 			$function => array_merge($nsArray, $params)
 		];
+	}
+
+	/**
+	 * From https://github.com/Zimbra-Community/zimbra-tools/blob/master/pre-auth-soap-saml.php
+	 * @param string $key
+	 * @param string $data
+	 * @return string
+	 */
+	private function hmac_sha1(string $key, string $data): string {
+		// Adjust key to exactly 64 bytes
+		if (strlen($key) > 64) {
+			$key = str_pad(sha1($key, true), 64, chr(0));
+		}
+		if (strlen($key) < 64) {
+			$key = str_pad($key, 64, chr(0));
+		}
+
+		// Outter and Inner pad
+		$opad = str_repeat(chr(0x5C), 64);
+		$ipad = str_repeat(chr(0x36), 64);
+
+		// Xor key with opad & ipad
+		for ($i = 0; $i < strlen($key); $i++) {
+			$opad[$i] = $opad[$i] ^ $key[$i];
+			$ipad[$i] = $ipad[$i] ^ $key[$i];
+		}
+
+		return sha1($opad.sha1($ipad.$data, true));
 	}
 }

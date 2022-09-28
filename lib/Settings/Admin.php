@@ -30,9 +30,11 @@ class Admin implements ISettings {
 	 */
 	public function getForm(): TemplateResponse {
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
+		$preAuthKey = $this->config->getAppValue(Application::APP_ID, 'pre_auth_key');
 
 		$adminConfig = [
 			'admin_instance_url' => $adminUrl,
+			'pre_auth_key' => $preAuthKey,
 		];
 		$this->initialStateService->provideInitialState('admin-config', $adminConfig);
 		return new TemplateResponse(Application::APP_ID, 'adminSettings');

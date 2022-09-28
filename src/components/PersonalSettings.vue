@@ -39,6 +39,17 @@
 					:placeholder="t('integration_zimbra', 'Zimbra password')"
 					@keyup.enter="onConnectClick">
 			</div>
+			<div v-show="showLoginPassword && twoFactorRequired" class="field">
+				<label for="zimbra-2fa">
+					<LockIcon :size="20" class="icon" />
+					{{ t('integration_zimbra', 'Second authentication factor') }}
+				</label>
+				<input id="zimbra-2fa"
+					v-model="twoFactorCode"
+					type="text"
+					:placeholder="t('integration_zimbra', '123456')"
+					@keyup.enter="onConnectClick">
+			</div>
 			<NcButton v-if="!connected"
 				id="zimbra-connect"
 				:disabled="loading === true || !(login && password)"
@@ -125,6 +136,8 @@ export default {
 			loading: false,
 			login: '',
 			password: '',
+			twoFactorRequired: false,
+			twoFactorCode: '',
 		}
 	},
 
@@ -160,6 +173,7 @@ export default {
 			this.state.token = ''
 			this.login = ''
 			this.password = ''
+			this.twoFactorCode = ''
 			this.saveOptions({ token: '' })
 		},
 		onSearchChange(newValue) {
@@ -195,13 +209,24 @@ export default {
 						showError(t('integration_zimbra', 'Invalid access token'))
 						this.state.token = ''
 					} else if (this.login && this.password && response.data.user_name === '') {
-						showError(t('integration_zimbra', 'Invalid login/password'))
+						if (response.data.two_factor_required) {
+							this.twoFactorRequired = true
+							showError(t('integration_zimbra', 'Zimbra second factor is required'))
+						} else {
+							if (this.twoFactorRequired) {
+								showError(t('integration_zimbra', 'Invalid login/password or second factor'))
+							} else {
+								showError(t('integration_zimbra', 'Invalid login/password'))
+							}
+						}
 					} else if (response.data.user_name) {
 						showSuccess(t('integration_zimbra', 'Successfully connected to Zimbra!'))
 						this.state.user_id = response.data.user_id
 						this.state.user_name = response.data.user_name
 						this.state.user_displayname = response.data.user_displayname
 						this.state.token = 'dumdum'
+						this.twoFactorCode = ''
+						this.twoFactorRequired = false
 					}
 				} else {
 					showSuccess(t('integration_zimbra', 'Zimbra options saved'))
@@ -227,6 +252,7 @@ export default {
 				login: this.login,
 				password: this.password,
 				url: this.state.url,
+				two_factor_code: this.twoFactorCode,
 			})
 		},
 	},

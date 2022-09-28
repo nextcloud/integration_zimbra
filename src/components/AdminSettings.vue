@@ -4,22 +4,44 @@
 			<ZimbraIcon class="icon" />
 			{{ t('integration_zimbra', 'Zimbra integration') }}
 		</h2>
-		<div class="field">
-			<label for="zimbra-instance">
-				<EarthIcon :size="20" class="icon" />
-				{{ t('integration_zimbra', 'Default Zimbra server') }}
-			</label>
-			<input id="zimbra-instance"
-				v-model="state.admin_instance_url"
-				type="text"
-				placeholder="https://..."
-				@input="onInput">
+		<div class="zimbra-content">
+			<div class="field">
+				<label for="zimbra-instance">
+					<EarthIcon :size="20" class="icon" />
+					{{ t('integration_zimbra', 'Default Zimbra server') }}
+				</label>
+				<input id="zimbra-instance"
+					v-model="state.admin_instance_url"
+					type="text"
+					placeholder="https://..."
+					@input="onInput">
+			</div>
+			<br>
+			<p class="settings-hint">
+				<InformationOutlineIcon :size="20" class="icon" />
+				{{ t('integration_zimbra', 'You can get a Zimbra pre-auth key by running "zmprov generateDomainPreAuthKey domain.com"') }}
+			</p>
+			<p class="settings-hint">
+				{{ t('integration_zimbra', 'A pre-auth key is required to authenticate with 2FA enabled.') }}
+			</p>
+			<div class="field">
+				<label for="zimbra-preauth-secret">
+					<EarthIcon :size="20" class="icon" />
+					{{ t('integration_zimbra', 'Zimbra pre-auth key (optional)') }}
+				</label>
+				<input id="zimbra-instance"
+					v-model="state.pre_auth_key"
+					type="password"
+					placeholder="..."
+					@input="onInput">
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
 import EarthIcon from 'vue-material-design-icons/Earth.vue'
+import InformationOutlineIcon from 'vue-material-design-icons/InformationOutline.vue'
 
 import ZimbraIcon from './icons/ZimbraIcon.vue'
 
@@ -35,6 +57,7 @@ export default {
 	components: {
 		ZimbraIcon,
 		EarthIcon,
+		InformationOutlineIcon,
 	},
 
 	props: [],
@@ -58,6 +81,7 @@ export default {
 			delay(() => {
 				this.saveOptions({
 					admin_instance_url: this.state.admin_instance_url,
+					pre_auth_key: this.state.pre_auth_key,
 				})
 			}, 2000)()
 		},
@@ -82,10 +106,13 @@ export default {
 
 <style scoped lang="scss">
 #zimbra_prefs {
+	.zimbra-content {
+		margin-left: 30px;
+	}
+
 	.field {
 		display: flex;
 		align-items: center;
-		margin-left: 30px;
 
 		input,
 		label {
@@ -104,6 +131,9 @@ export default {
 	.settings-hint {
 		display: flex;
 		align-items: center;
+		.icon {
+			margin-right: 8px;
+		}
 	}
 
 	h2 {
