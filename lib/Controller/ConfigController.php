@@ -11,6 +11,7 @@
 
 namespace OCA\Zimbra\Controller;
 
+use DateTime;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http\DataResponse;
@@ -118,25 +119,13 @@ class ConfigController extends Controller {
 
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'token', $result['token']);
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_name', $login);
-
-			/*
-			// this is how to use pre-auth to get a token without the users credentials
-			$preAuthKey = $this->config->getAppValue(Application::APP_ID, 'pre_auth_key');
-			if ($preAuthKey) {
-				$preAuthResult = $this->zimbraAPIService->preAuth($this->userId, $login);
-				if (isset($preAuthResult['token'])) {
-					$this->config->setUserValue($this->userId, Application::APP_ID, 'token', $preAuthResult['token']);
-				} else {
-					return new DataResponse([
-						'user_id' => '',
-						'user_name' => '',
-						'user_displayname' => '',
-						'error' => 'preauth failed',
-						'details' => $preAuthResult,
-					]);
-				}
+			$nowTs = (new DateTime())->getTimestamp();
+			if ($twoFactorCode !== null) {
+				$inOneMonth = $nowTs + (30 * 24 * 60 * 60);
+				$this->config->setUserValue($this->userId, Application::APP_ID, '2fa_expires_at', (string)$inOneMonth);
 			}
-			*/
+			$tokenExpireAt = $nowTs + (int)($result['token_lifetime'] / 1000);
+			$this->config->setUserValue($this->userId, Application::APP_ID, 'token_expires_at', (string)$tokenExpireAt);
 
 			// get user info
 			$infoReqResp = $this->zimbraAPIService->soapRequest($this->userId, 'GetInfoRequest', 'urn:zimbraAccount', ['rights' => '', 'sections' => 'attrs']);
@@ -152,6 +141,7 @@ class ConfigController extends Controller {
 				'user_id' => $zUserId,
 				'user_name' => $zUserName,
 				'user_displayname' => $zUserDisplayName,
+				//'details' => $result,
 //				'contacts' => $this->zimbraAPIService->getContacts($this->userId),
 //				'events' => $this->zimbraAPIService->getUpcomingEventsSoap($this->userId),
 //				'mail' => $this->zimbraAPIService->getUnreadEmails($this->userId),

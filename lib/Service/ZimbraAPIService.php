@@ -229,6 +229,7 @@ class ZimbraAPIService {
 	 */
 	public function restRequest(string $userId, string $endPoint, array $params = [], string $method = 'GET',
 								bool $jsonResponse = true): array {
+		$this->checkTokenExpiration($userId);
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
@@ -337,6 +338,7 @@ class ZimbraAPIService {
 	 */
 	public function soapRequest(string $userId, string $function, string $ns, array $params = [],
 								bool $jsonResponse = true): array {
+		$this->checkTokenExpiration($userId);
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
@@ -453,6 +455,7 @@ class ZimbraAPIService {
 						$twoFactorAuthRequired = $r['Body']['AuthResponse']['twoFactorAuthRequired']['_content'] ?? '';
 						return [
 							'token' => $token,
+							'token_lifetime' => (int) ($r['Body']['AuthResponse']['lifetime'] ?? 0),
 							'two_factor_required' => $twoFactorAuthRequired === 'true',
 							//'requestBody' => $bodyArray,
 							//'responseBody' => $r,
@@ -472,6 +475,58 @@ class ZimbraAPIService {
 			$this->logger->warning('Zimbra login error : '.$e->getMessage(), ['app' => Application::APP_ID]);
 			return ['error' => $e->getMessage()];
 		}
+	}
+
+	/**
+	 * @param string $userId
+	 * @return bool
+	 * @throws PreConditionNotMetException
+	 */
+	public function checkTokenExpiration(string $userId): bool {
+		$tokenExpiresAt = $this->config->getUserValue($userId, Application::APP_ID, 'token_expires_at');
+		if ($tokenExpiresAt !== '') {
+			$nowTs = (new DateTime())->getTimestamp();
+			$tokenExpiresAt = (int) $tokenExpiresAt;
+			if ($nowTs > $tokenExpiresAt - 60) {
+
+				// try login with credentials
+				$login = $this->config->getUserValue($userId, Application::APP_ID, 'login');
+				$password = $this->config->getUserValue($userId, Application::APP_ID, 'password');
+				$loginResult = $this->login($userId, $login, $password);
+				if (isset($result['error'])) {
+					return false;
+				}
+				// login success
+				if ($loginResult['two_factor_required']) {
+					// 2fa is required: is it older than a month?
+					$twoFactorExpiresAt = $this->config->getUserValue($userId, Application::APP_ID, '2fa_expires_at');
+					if ($twoFactorExpiresAt === '') {
+						return false;
+					}
+					if ($nowTs <= $twoFactorExpiresAt) {
+						$preAuthKey = $this->config->getAppValue(Application::APP_ID, 'pre_auth_key');
+						if ($preAuthKey) {
+							$preAuthResult = $this->preAuth($userId, $login);
+							if (isset($preAuthResult['token'])) {
+								$this->config->setUserValue($userId, Application::APP_ID, 'token', $preAuthResult['token']);
+								$tokenExpireAt = $nowTs + (int)($preAuthResult['token_lifetime'] / 1000);
+								$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', (string)$tokenExpireAt);
+							} else {
+								// failed
+							}
+						}
+					} else {
+						// 2fa has expired:
+					}
+				} else {
+					// no 2fa so we can use this token
+					$this->config->setUserValue($userId, Application::APP_ID, 'token', $loginResult['token']);
+					$tokenExpireAt = $nowTs + (int)($loginResult['token_lifetime'] / 1000);
+					$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', (string)$tokenExpireAt);
+				}
+			}
+		}
+		return false;
 	}
 
 	public function preAuth(string $userId, string $login): array {
@@ -520,6 +575,7 @@ class ZimbraAPIService {
 						$token = $r['Body']['AuthResponse']['authToken'][0]['_content'];
 						return [
 							'token' => $token,
+							'token_lifetime' => (int) ($r['Body']['AuthResponse']['lifetime'] ?? 0),
 						];
 					}
 				} catch (Exception | Throwable $e) {
