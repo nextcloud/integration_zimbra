@@ -132,6 +132,9 @@ class ZimbraAPIService {
 	public function getUpcomingEventsSoap(string $userId, ?int $sinceTs = null): array {
 		// get calendar list
 		$calResp = $this->soapRequest($userId, 'GetFolderRequest', 'urn:zimbraMail', ['view' => 'appointment']);
+		if (isset($calResp['error'])) {
+			return $calResp;
+		}
 		$topFolders = $calResp['Body']['GetFolderResponse']['folder'] ?? [];
 		$folders = [];
 		foreach ($topFolders as $topFolder) {
@@ -162,6 +165,9 @@ class ZimbraAPIService {
 			'calExpandInstEnd' => $sinceMilliTs + (60 * 60 * 24 * 30 * 1000),
 		];
 		$eventResp = $this->soapRequest($userId, 'SearchRequest', 'urn:zimbraMail', $params);
+		if (isset($eventResp['error'])) {
+			return $eventResp;
+		}
 		$events = $eventResp['Body']['SearchResponse']['appt'] ?? [];
 		usort($events, static function(array $a, array $b) {
 			$aStart = $a['inst'][0]['s'];
@@ -184,6 +190,9 @@ class ZimbraAPIService {
 			'query' => 'is:unread',
 		];
 		$result = $this->restRequest($userId, 'home/' . $zimbraUserName . '/inbox', $params);
+		if (isset($result['error'])) {
+			return $result;
+		}
 		$emails = $result['m'] ?? [];
 
 		// sort emails by date, DESC, recents first
@@ -229,7 +238,10 @@ class ZimbraAPIService {
 	 */
 	public function restRequest(string $userId, string $endPoint, array $params = [], string $method = 'GET',
 								bool $jsonResponse = true): array {
-		$this->checkTokenExpiration($userId);
+		$tokenIsOk = $this->checkTokenExpiration($userId);
+		if (!$tokenIsOk) {
+			return ['error' => $this->l10n->t('Your Zimbra session has expired, please re-authenticate in your user settings.')];
+		}
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
@@ -338,7 +350,10 @@ class ZimbraAPIService {
 	 */
 	public function soapRequest(string $userId, string $function, string $ns, array $params = [],
 								bool $jsonResponse = true): array {
-		$this->checkTokenExpiration($userId);
+		$tokenIsOk = $this->checkTokenExpiration($userId);
+		if (!$tokenIsOk) {
+			return ['error' => $this->l10n->t('Your Zimbra session has expired, please re-authenticate in your user settings.')];
+		}
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
@@ -478,8 +493,10 @@ class ZimbraAPIService {
 	}
 
 	/**
+	 * Check if the auth token has expired and try to refresh it if so
 	 * @param string $userId
-	 * @return bool
+	 * @return bool true if the token is still valid or we managed to refresh it, false if there was an issue
+	 * or if the second factor is outdated (more than a month old)
 	 * @throws PreConditionNotMetException
 	 */
 	public function checkTokenExpiration(string $userId): bool {
@@ -488,7 +505,6 @@ class ZimbraAPIService {
 			$nowTs = (new DateTime())->getTimestamp();
 			$tokenExpiresAt = (int) $tokenExpiresAt;
 			if ($nowTs > $tokenExpiresAt - 60) {
-
 				// try login with credentials
 				$login = $this->config->getUserValue($userId, Application::APP_ID, 'login');
 				$password = $this->config->getUserValue($userId, Application::APP_ID, 'password');
@@ -511,6 +527,7 @@ class ZimbraAPIService {
 								$this->config->setUserValue($userId, Application::APP_ID, 'token', $preAuthResult['token']);
 								$tokenExpireAt = $nowTs + (int)($preAuthResult['token_lifetime'] / 1000);
 								$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', (string)$tokenExpireAt);
+								return true;
 							} else {
 								// failed
 							}
@@ -523,7 +540,11 @@ class ZimbraAPIService {
 					$this->config->setUserValue($userId, Application::APP_ID, 'token', $loginResult['token']);
 					$tokenExpireAt = $nowTs + (int)($loginResult['token_lifetime'] / 1000);
 					$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', (string)$tokenExpireAt);
+					return true;
 				}
+			} else {
+				// token has not expired
+				return true;
 			}
 		}
 		return false;

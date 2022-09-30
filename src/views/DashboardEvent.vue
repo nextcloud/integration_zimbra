@@ -187,6 +187,10 @@ export default {
 				clearInterval(this.loop)
 				if (error.response && error.response.status === 400) {
 					this.widgetState = 'no-token'
+					showError(
+						t('integration_zimbra', 'Failed to get Zimbra upcoming events')
+						+ ', ' + error.response.data
+					)
 				} else if (error.response && error.response.status === 401) {
 					showError(t('integration_zimbra', 'Failed to get Zimbra upcoming events'))
 					this.widgetState = 'error'
