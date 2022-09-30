@@ -6,9 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## 1.0.3 – 2022-09-22
+## 1.0.3 – 2022-09-30
 ### Added
 - Basic admin settings section to set a default server address
+- Support for two factor authentication and token refresh (via pre-auth if 2fa is enabled)
 
 ### Changed
 - big code cleanup
