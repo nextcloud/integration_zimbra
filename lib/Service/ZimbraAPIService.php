@@ -27,10 +27,6 @@ use Throwable;
 
 class ZimbraAPIService {
 	/**
-	 * @var string
-	 */
-	private $appName;
-	/**
 	 * @var LoggerInterface
 	 */
 	private $logger;
@@ -60,7 +56,6 @@ class ZimbraAPIService {
 								IConfig $config,
 								IAppManager $appManager,
 								IClientService $clientService) {
-		$this->appName = $appName;
 		$this->logger = $logger;
 		$this->l10n = $l10n;
 		$this->client = $clientService->newClient();
@@ -313,29 +308,21 @@ class ZimbraAPIService {
 				}
 			}
 		} catch (ClientException $e) {
-			$respCode = $e->getResponse()->getStatusCode();
-			// special case: 401, unauthenticated
-			// we try to reauthenticate with same login/password
-			// if it fails, we delete the login/password
-			// if it works, we perform the request again
-			if ($respCode === 401) {
-				$login = $this->config->getUserValue($userId, Application::APP_ID, 'login');
-				$password = $this->config->getUserValue($userId, Application::APP_ID, 'password');
-				if ($login && $password) {
-					$loginResult = $this->login($userId, $login, $password);
-					if (isset($loginResult['token']) && !$loginResult['two_factor_required']) {
-						$this->config->setUserValue($userId, Application::APP_ID, 'token', $loginResult['token']);
-						return $this->restRequest($userId, $endPoint, $params, $method, $jsonResponse);
-					} else {
-						$this->config->deleteUserValue($userId, Application::APP_ID, 'login');
-						$this->config->deleteUserValue($userId, Application::APP_ID, 'password');
-					}
-				}
-			}
-			return ['error' => $e->getMessage()];
+			$response = $e->getResponse();
+			$this->logger->warning('Zimbra API client error : ' . $e->getMessage(), [
+				'app' => Application::APP_ID,
+				'responseBody' => $response->getBody(),
+				'exception' => $e->getMessage(),
+			]);
+			return ['error' => $this->l10n->t('Zimbra request error')];
 		} catch (ServerException $e) {
-			$this->logger->debug('Zimbra API error : ' . $e->getMessage(), ['app' => $this->appName]);
-			return ['error' => $e->getMessage()];
+			$response = $e->getResponse();
+			$this->logger->debug('Zimbra API server error : ' . $e->getMessage(), [
+				'app' => Application::APP_ID,
+				'responseBody' => $response->getBody(),
+				'exception' => $e->getMessage(),
+			]);
+			return ['error' => $this->l10n->t('Zimbra request failure')];
 		}
 	}
 
@@ -389,29 +376,20 @@ class ZimbraAPIService {
 				}
 			}
 		} catch (ClientException $e) {
-			$this->logger->debug('Zimbra API error : '.$e->getMessage(), ['app' => $this->appName]);
+			$response = $e->getResponse();
+			$this->logger->warning('Zimbra API client error : ' . $e->getMessage(), [
+				'app' => Application::APP_ID,
+				'responseBody' => $response->getBody(),
+				'exception' => $e->getMessage(),
+			]);
 			return ['error' => $e->getMessage()];
 		} catch (ServerException $e) {
-			$respCode = $e->getResponse()->getStatusCode();
-			// special case: 500, unauthenticated
-			// we try to reauthenticate with same login/password
-			// if it fails, we delete the login/password
-			// if it works, we perform the request again
-			if ($respCode === 500) {
-				$login = $this->config->getUserValue($userId, Application::APP_ID, 'login');
-				$password = $this->config->getUserValue($userId, Application::APP_ID, 'password');
-				if ($login && $password) {
-					$loginResult = $this->login($userId, $login, $password);
-					if (isset($loginResult['token']) && !$loginResult['two_factor_required']) {
-						$this->config->setUserValue($userId, Application::APP_ID, 'token', $loginResult['token']);
-						return $this->soapRequest($userId, $function, $ns, $params, $jsonResponse);
-					} else {
-						$this->config->deleteUserValue($userId, Application::APP_ID, 'login');
-						$this->config->deleteUserValue($userId, Application::APP_ID, 'password');
-					}
-				}
-			}
-			$this->logger->debug('Zimbra API error : '.$e->getMessage(), ['app' => $this->appName]);
+			$response = $e->getResponse();
+			$this->logger->debug('Zimbra API server error : ' . $e->getMessage(), [
+				'app' => Application::APP_ID,
+				'responseBody' => $response->getBody(),
+				'exception' => $e->getMessage(),
+			]);
 			return ['error' => $e->getMessage()];
 		}
 	}
@@ -484,11 +462,11 @@ class ZimbraAPIService {
 		} catch (ServerException $e) {
 			$response = $e->getResponse();
 			$body = $response->getBody();
-			$this->logger->warning('Zimbra login server error : '.$body, ['app' => Application::APP_ID]);
-			return ['error' => $e->getMessage()];
+			$this->logger->warning('Zimbra login server error : ' . $body, ['app' => Application::APP_ID]);
+			return ['error' => $this->l10n->t('Login server error')];
 		} catch (Exception | Throwable $e) {
-			$this->logger->warning('Zimbra login error : '.$e->getMessage(), ['app' => Application::APP_ID]);
-			return ['error' => $e->getMessage()];
+			$this->logger->warning('Zimbra login error : ' . $e->getMessage(), ['app' => Application::APP_ID]);
+			return ['error' => $this->l10n->t('Login error')];
 		}
 	}
 
