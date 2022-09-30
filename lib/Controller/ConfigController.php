@@ -75,6 +75,7 @@ class ConfigController extends Controller {
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'token');
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'login');
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'password');
+				$this->config->deleteUserValue($this->userId, Application::APP_ID, '2fa_expires_at');
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'zimbra_version');
 				$result['user_id'] = '';
 				$result['user_name'] = '';

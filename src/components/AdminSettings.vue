@@ -22,7 +22,7 @@
 				{{ t('integration_zimbra', 'You can get a Zimbra pre-auth key by running "zmprov generateDomainPreAuthKey domain.com"') }}
 			</p>
 			<p class="settings-hint">
-				{{ t('integration_zimbra', 'A pre-auth key is required to authenticate with 2FA enabled.') }}
+				{{ t('integration_zimbra', 'A pre-auth key is required to refresh expired user sessions when 2FA is enabled on your Zimbra server.') }}
 			</p>
 			<div class="field">
 				<label for="zimbra-preauth-secret">
