@@ -74,6 +74,17 @@ class ZimbraAPIService {
 		return $url && $userName && $token && $login && $password;
 	}
 
+	public function getZimbraVersion(string $userId): array {
+		$rawVersion = $this->config->getUserValue($userId, Application::APP_ID, 'zimbra_version');
+		if ($rawVersion) {
+			preg_match('/^(\d+)\.(\d+)\.(\d+)_/', $rawVersion, $matches);
+			if (count($matches) > 2) {
+				return [$matches[1], $matches[2], $matches[3]];
+			};
+		}
+		return [0, 0, 0];
+	}
+
 	/**
 	 * @param string $userId
 	 * @return array|string[]

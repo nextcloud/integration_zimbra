@@ -23,6 +23,7 @@
 
 namespace OCA\Zimbra\Dashboard;
 
+use OCA\Zimbra\Service\ZimbraAPIService;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Dashboard\IWidget;
 use OCP\IConfig;
@@ -52,17 +53,23 @@ class ZimbraEmailWidget implements IWidget {
 	 * @var string|null
 	 */
 	private $userId;
+	/**
+	 * @var ZimbraAPIService
+	 */
+	private $zimbraAPIService;
 
-	public function __construct(IL10N         $l10n,
-								IConfig       $config,
+	public function __construct(IL10N $l10n,
+								ZimbraAPIService $zimbraAPIService,
+								IConfig $config,
 								IURLGenerator $url,
 								IInitialState $initialStateService,
-								?string       $userId) {
+								?string $userId) {
 		$this->l10n = $l10n;
 		$this->url = $url;
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->userId = $userId;
+		$this->zimbraAPIService = $zimbraAPIService;
 	}
 
 	/**
@@ -107,8 +114,11 @@ class ZimbraEmailWidget implements IWidget {
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$userZimbraUrl = $this->config->getUserValue($this->userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 
+		$zimbraVersion = $this->zimbraAPIService->getZimbraVersion($this->userId);
+
 		$userConfig = [
 			'url' => $userZimbraUrl,
+			'zimbra_version' => $zimbraVersion,
 		];
 		$this->initialStateService->provideInitialState('zimbra-email-config', $userConfig);
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-dashboardEmail');

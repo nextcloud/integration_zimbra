@@ -215,6 +215,9 @@ export default {
 			return email.id
 		},
 		getEmailTarget(email) {
+			if (this.initialState?.zimbra_version && this.initialState?.zimbra_version[0] < 9) {
+				return this.zimbraUrl + '/mail?id=' + email.id
+			}
 			return this.zimbraUrl + '/modern/email/Inbox/conversation/' + email.cid
 		},
 		getAvatarName(email) {
