@@ -1,0 +1,9 @@
+{ "translations": {
+    "Bad HTTP method" : "Mètodu HTTP no bàlidu",
+    "Bad credentials" : "Credentziales non bàlidas",
+    "Connected accounts" : "Contos connètidos",
+    "Login" : "Atzessu",
+    "Password" : "Crae",
+    "Connected as {user}" : "Connètidu comente {user}"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

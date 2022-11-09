@@ -1,0 +1,10 @@
+{ "translations": {
+    "Bad HTTP method" : "HTTP yöntemi hatalı",
+    "Bad credentials" : "Kimlik doğrulama bilgileri hatalı",
+    "Connected accounts" : "Bağlı hesaplar",
+    "Login" : "Oturum aç",
+    "Password" : "Parola",
+    "Connected as {user}" : "{user} olarak bağlantı kuruldu",
+    "Invalid access token" : "Erişim kodu geçersiz"
+},"pluralForm" :"nplurals=2; plural=(n > 1);"
+}

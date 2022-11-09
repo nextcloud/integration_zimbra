@@ -1,0 +1,10 @@
+{ "translations": {
+    "Bad HTTP method" : "Ungültige HTTP-Methode",
+    "Bad credentials" : "Falsche Anmeldeinformationen",
+    "Connected accounts" : "Verbundene Konten",
+    "Login" : "Anmelden",
+    "Password" : "Passwort",
+    "Connected as {user}" : "Verbunden als {user}",
+    "Invalid access token" : "Falscher Zugriffstoken"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}
