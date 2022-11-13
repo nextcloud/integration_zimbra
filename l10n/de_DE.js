@@ -31,6 +31,8 @@ OC.L10N.register(
     "Zimbra options saved" : "Zimbra-Einstellungen gespeichert",
     "Failed to save Zimbra options" : "Fehler beim Speichern der Zimbra-Einstellungen",
     "No Zimbra account connected" : "Kein Zimbra-Konto verbunden",
-    "Error connecting to Zimbra" : "Fehler beim Verbinden mit Zimbra"
+    "Error connecting to Zimbra" : "Fehler beim Verbinden mit Zimbra",
+    "No Zimbra unread email!" : "Keine Zimbra ungelesene E-Mails",
+    "Failed to get Zimbra emails" : "Fehler beim Abruf der Zimbra E-Mails"
 },
 "nplurals=2; plural=(n != 1);");
