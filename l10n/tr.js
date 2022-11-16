@@ -9,6 +9,7 @@ OC.L10N.register(
     "Login" : "Oturum aç",
     "Password" : "Parola",
     "Connected as {user}" : "{user} olarak bağlantı kuruldu",
-    "Invalid access token" : "Erişim kodu geçersiz"
+    "Invalid access token" : "Erişim kodu geçersiz",
+    "Invalid login/password" : "Kullanıcı adı ya da parola geçersiz"
 },
 "nplurals=2; plural=(n > 1);");
