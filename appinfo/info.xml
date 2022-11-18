@@ -4,7 +4,7 @@
 	<name>Zimbra integration</name>
 	<summary>Integration of Zimbra</summary>
 	<description><![CDATA[Zimbra integration into Nextcloud provides a dashboard widget for unread emails,
- one for upcoming events, a search provider for emails and the ability so search for Zimbra contacts in Nextcloud.
+ one for upcoming events, a search provider for emails and the ability to search for Zimbra contacts in Nextcloud.
 
 Nextcloud will suggest your Zimbra contacts addresses when you search for a contact via the top-right contacts menu
 or when you search for someone to share a file to.]]></description>
