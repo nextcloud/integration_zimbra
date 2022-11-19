@@ -15,7 +15,6 @@
     "Connected accounts" : "Verbundene Konten",
     "Zimbra integration" : "Zimbra-Einbindung",
     "Integration of Zimbra" : "Integration von Zimbra",
-    "Zimbra integration into Nextcloud provides a dashboard widget for unread emails,\n one for upcoming events, a search provider for emails and the ability so search for Zimbra contacts in Nextcloud.\n\nNextcloud will suggest your Zimbra contacts addresses when you search for a contact via the top-right contacts menu\nor when you search for someone to share a file to." : "Die Zimbra-Integration in Nextcloud bietet ein Dashboard-Widget für ungelesene E-Mails,\neine für bevorstehende Veranstaltungen, einen Suchanbieter für E-Mails und die Möglichkeit, in Nextcloud nach Zimbra-Kontakten zu suchen.\n\nNextcloud schlägt die Adressen Ihrer Zimbra-Kontakte vor, wenn Sie über das Kontaktmenü oben rechts nach einem Kontakt suchen\noder wenn Sie nach jemandem suchen, mit dem Sie eine Datei teilen können.",
     "Default Zimbra server" : "Standar-Zimbra-Server",
     "You can get a Zimbra pre-auth key by running \"zmprov generateDomainPreAuthKey domain.com\"" : "Sie können einen Zimbra Pre-Auth Key erhalten, indem Sie \"zmprov generateDomainPreAuthKey domain.com\" ausführen.",
     "A pre-auth key is required to refresh expired user sessions when 2FA is enabled on your Zimbra server." : "Ein Vorauthentifizierungsschlüssel ist erforderlich, um abgelaufene Benutzersitzungen zu aktualisieren, wenn 2FA auf Ihrem Zimbra-Server aktiviert ist.",

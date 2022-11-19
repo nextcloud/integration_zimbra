@@ -17,7 +17,6 @@ OC.L10N.register(
     "Connected accounts" : "Propojené účty",
     "Zimbra integration" : "Napojení na Zimbra",
     "Integration of Zimbra" : "Napojení na Zimbra",
-    "Zimbra integration into Nextcloud provides a dashboard widget for unread emails,\n one for upcoming events, a search provider for emails and the ability so search for Zimbra contacts in Nextcloud.\n\nNextcloud will suggest your Zimbra contacts addresses when you search for a contact via the top-right contacts menu\nor when you search for someone to share a file to." : "Napojení Nextcloud na Zimbra poskytuje ovládací prvek pro nástěnku pro nepřečtené e-maily, další pro nadcházející událostí a poskytovatele do sjednoceného vyhledávání pro emaily a schopnost tak vyhledávat z Nextcloud v kontaktech v Zimbra.\n\nTakže když budete vyhledávat prostřednictvím nabídky kontaktů v pravém horním rohu, Nextcloud vám bude  našeptávat kontaktní údaje ze Zimbra\nnebo když hledáte někoho s komu nasdílet soubor.",
     "Default Zimbra server" : "Výchozí Zimbra server",
     "You can get a Zimbra pre-auth key by running \"zmprov generateDomainPreAuthKey domain.com\"" : "Klíč pro předověření je možné získat spuštěním příkazu „zmprov generateDomainPreAuthKey example.com“",
     "A pre-auth key is required to refresh expired user sessions when 2FA is enabled on your Zimbra server." : "Klíč pro předověření je zapotřebí pro obnovení relací uživatelů, kterým skončila platnost v případě, že je na vámi využívaném Zimbra serveru využíváno dvoufaktorové ověřování se.",

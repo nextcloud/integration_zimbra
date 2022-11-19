@@ -17,7 +17,6 @@ OC.L10N.register(
     "Connected accounts" : "已連線的帳號",
     "Zimbra integration" : "Zimbra 整合",
     "Integration of Zimbra" : "Zimbra 整合",
-    "Zimbra integration into Nextcloud provides a dashboard widget for unread emails,\n one for upcoming events, a search provider for emails and the ability so search for Zimbra contacts in Nextcloud.\n\nNextcloud will suggest your Zimbra contacts addresses when you search for a contact via the top-right contacts menu\nor when you search for someone to share a file to." : "Nextcloud 的 Zimbra 整合提供了儀表板小工具，其會顯示未讀電子郵件、\n 即將到來的活動、電子郵件搜尋提供者以及可在 Nextcloud 中搜尋 Zimbra 聯絡人的能力。\n\nNextcloud 將會在您透過右上角的聯絡人選單或在您要分享檔案給某人時在搜尋方塊\n中建議 Zimbra 聯絡人。",
     "Default Zimbra server" : "預設 Zimbra 伺服器",
     "You can get a Zimbra pre-auth key by running \"zmprov generateDomainPreAuthKey domain.com\"" : "您可以透過執行「zmprov generateDomainPreAuthKey domain.com」來取得 Zimbra 預先授權金鑰",
     "A pre-auth key is required to refresh expired user sessions when 2FA is enabled on your Zimbra server." : "在 Zimbra 伺服器上啟用 2FA 時，需要預先授權金鑰來重新整理過期的使用者工作階段。",
