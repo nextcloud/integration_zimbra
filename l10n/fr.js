@@ -3,10 +3,13 @@ OC.L10N.register(
     {
     "Bad HTTP method" : "Mauvaise méthode HTTP",
     "Bad credentials" : "Identifiants incorrects",
+    "Invalid credentials" : "Identifiants invalides",
+    "Invalid response" : "Réponse non valide",
     "Connected accounts" : "Comptes connectés",
     "Login" : "S'identifier",
     "Password" : "Mot de passe",
     "Connected as {user}" : "Connecté en tant que {user}",
-    "Invalid access token" : "Jeton d'accès invalide"
+    "Invalid access token" : "Jeton d'accès invalide",
+    "Invalid login/password" : "Identifiant/mot de passe incorects"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
