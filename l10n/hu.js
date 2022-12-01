@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Bad HTTP method" : "Hibás HTTP metódus",
     "Bad credentials" : "Hibás hitelesítő adatok",
+    "Invalid credentials" : "Érvénytelen hitelesítő adatok",
     "Invalid response" : "Hibás válasz",
     "Connected accounts" : "Kapcsolt fiókok",
     "Login" : "Bejelentkezés",
