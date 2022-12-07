@@ -5,7 +5,7 @@ OC.L10N.register(
     "Zimbra unread emails" : "Zimbra ungelesene E-Mails",
     "Zimbra events" : "Zimbra-Termine",
     "Zimbra emails" : "Zimbra-E-Mails",
-    "Your Zimbra session has expired, please re-authenticate in your user settings." : "Ihre Zimbra-Sitzung ist abgelaufen, bitte authentifizieren Sie sich erneut in Ihren Benutzereinstellungen.",
+    "Your Zimbra session has expired, please re-authenticate in your user settings." : "Ihre Zimbra-Sitzung ist abgelaufen, bitte melden Sie sich erneut in Ihren Benutzereinstellungen an.",
     "Bad HTTP method" : "Ungültige HTTP-Methode",
     "Bad credentials" : "Falsche Anmeldeinformationen",
     "Zimbra request error" : "Zimbra Anfragefehler",
