@@ -498,11 +498,12 @@ class ZimbraAPIService {
 				$login = $this->config->getUserValue($userId, Application::APP_ID, 'login');
 				$password = $this->config->getUserValue($userId, Application::APP_ID, 'password');
 				$loginResult = $this->login($userId, $login, $password);
-				if (isset($result['error'])) {
+				if (isset($loginResult['error'])) {
+					$this->logger->debug('Zimbra token refresh error : ' . $loginResult['error'], ['app' => Application::APP_ID]);
 					return false;
 				}
 				// login success
-				if ($loginResult['two_factor_required']) {
+				if (isset($loginResult['two_factor_required']) && $loginResult['two_factor_required']) {
 					// 2fa is required: is it older than a month?
 					$twoFactorExpiresAt = $this->config->getUserValue($userId, Application::APP_ID, '2fa_expires_at');
 					if ($twoFactorExpiresAt === '') {
@@ -523,14 +524,17 @@ class ZimbraAPIService {
 						}
 					} else {
 						// 2fa has expired:
+						$this->logger->debug('Zimbra token refresh: 2nd factor has expired', ['app' => Application::APP_ID]);
 					}
-				} else {
+				} elseif (isset($loginResult['token'], $loginResult['token_lifetime'])) {
 					// no 2fa so we can use this token
 					$this->config->setUserValue($userId, Application::APP_ID, 'token', $loginResult['token']);
 					$tokenExpireAt = $nowTs + (int)($loginResult['token_lifetime'] / 1000);
 					$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', (string)$tokenExpireAt);
+					$this->logger->debug('Zimbra token refresh: success', ['app' => Application::APP_ID]);
 					return true;
 				}
+				$this->logger->debug('Zimbra token refresh error: no two_factor_required and no token, token_lifetime', ['app' => Application::APP_ID]);
 			} else {
 				// token has not expired
 				return true;
