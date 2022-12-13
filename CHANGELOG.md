@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## 1.0.4 – 2022-12-13
+### Changed
+- use @nextcloud/vue 7.2.0
+- update npm pkgs
+
+### Fixed
+- token refresh crash when login fails
+
 ## 1.0.3 – 2022-09-30
 ### Added
 - Basic admin settings section to set a default server address
