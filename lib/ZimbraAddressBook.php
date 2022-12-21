@@ -27,6 +27,7 @@ namespace OCA\Zimbra;
 use OCA\Zimbra\AppInfo\Application;
 use OCA\Zimbra\Exception\ServiceException;
 use OCA\Zimbra\Service\ZimbraAPIService;
+use OCP\Constants;
 use OCP\IAddressBook;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -186,7 +187,7 @@ class ZimbraAddressBook implements IAddressBook {
 	 * @throws ServiceException
 	 */
 	public function getPermissions() {
-		throw new ServiceException('Operation not available', 403);
+		return Constants::PERMISSION_READ;
 	}
 
 	/**
