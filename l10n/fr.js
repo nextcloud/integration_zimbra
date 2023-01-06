@@ -2,6 +2,9 @@ OC.L10N.register(
     "integration_zimbra",
     {
     "Zimbra" : "Zimbra",
+    "Zimbra unread emails" : "E-mails Zimbra non lus",
+    "Zimbra events" : "Évènements Zimbra",
+    "Zimbra emails" : "E-mails Zimbra",
     "Bad HTTP method" : "Mauvaise méthode HTTP",
     "Bad credentials" : "Identifiants incorrects",
     "Invalid credentials" : "Identifiants invalides",
