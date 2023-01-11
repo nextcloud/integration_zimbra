@@ -17,6 +17,7 @@ OC.L10N.register(
     "Connected accounts" : "Contas conectadas",
     "Zimbra integration" : "Integração Zimbra",
     "Integration of Zimbra" : "Integração para Zimbra",
+    "Zimbra integration into Nextcloud provides a dashboard widget for unread emails,\n one for upcoming events, a search provider for emails and the ability to search for Zimbra contacts in Nextcloud.\n\nNextcloud will suggest your Zimbra contacts addresses when you search for a contact via the top-right contacts menu\nor when you search for someone to share a file to." : "A integração do Zimbra no Nextcloud fornece um widget de painel para e-mails não lidos,\n A integração do Zimbra no Nextcloud fornece um widget de painel para e-mails não lidos,\n\nO Nextcloud irá sugerir os endereços de seus contatos do Zimbra quando você procurar por um contato através do menu de contatos no canto superior direito\nou quando você procura alguém para compartilhar um arquivo.",
     "Default Zimbra server" : "Servidor padrão Zimbra",
     "You can get a Zimbra pre-auth key by running \"zmprov generateDomainPreAuthKey domain.com\"" : "Você pode obter uma chave de pré-autenticação do Zimbra executando \"zmprov generateDomainPreAuthKey domain.com\"",
     "A pre-auth key is required to refresh expired user sessions when 2FA is enabled on your Zimbra server." : "Uma chave de pré-autenticação é necessária para atualizar as sessões de usuário expiradas quando o 2FA está ativado em seu servidor Zimbra.",
