@@ -9,6 +9,7 @@ OC.L10N.register(
     "Login" : "Bejelentkezés",
     "Password" : "Jelszó",
     "Connected as {user}" : "Kapcsolódva mint {user}",
-    "Invalid access token" : "Érvénytelen hozzáférési token"
+    "Invalid access token" : "Érvénytelen hozzáférési token",
+    "Invalid login/password" : "Érvénytelen bejelentkezés/jelszó"
 },
 "nplurals=2; plural=(n != 1);");
