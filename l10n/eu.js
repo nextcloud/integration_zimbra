@@ -1,11 +1,15 @@
 OC.L10N.register(
     "integration_zimbra",
     {
+    "Zimbra" : "Zimbra",
+    "Zimbra events" : "Zimbra gertaerak",
+    "Zimbra emails" : "Zimbra e-postak",
     "Bad HTTP method" : "HTTP metodo okerra",
     "Bad credentials" : "Kredentzial okerrak",
     "Invalid credentials" : "Kredentzial baliogabeak",
     "Invalid response" : "Erantzun baliogabea",
     "Connected accounts" : "Konektatutako kontuak",
+    "Zimbra integration" : "Zimbra integrazioa",
     "Login" : "Hasi saioa",
     "Password" : "Pasahitza",
     "123456" : "123456",
