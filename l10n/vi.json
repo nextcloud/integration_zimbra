@@ -1,0 +1,6 @@
+{ "translations": {
+    "Bad HTTP method" : "Phương thức HTTP không hợp lệ",
+    "Login" : "Đăng nhập",
+    "Password" : "Mật khẩu"
+},"pluralForm" :"nplurals=1; plural=0;"
+}
