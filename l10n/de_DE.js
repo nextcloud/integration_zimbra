@@ -12,7 +12,7 @@ OC.L10N.register(
     "Zimbra request failure" : "Zimbra Anfragefehler",
     "Invalid credentials" : "Ungültige Anmeldeinformationen",
     "Invalid response" : "Fehlerhafte Antwort",
-    "Login server error" : "Anmeldes-Server Fehler",
+    "Login server error" : "Anmelde-Server Fehler",
     "Login error" : "Anmeldefehler",
     "Connected accounts" : "Verbundene Konten",
     "Zimbra integration" : "Zimbra-Einbindung",
