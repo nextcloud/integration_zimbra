@@ -6,6 +6,8 @@ OC.L10N.register(
     "Connected accounts" : "Anslutna konton",
     "Login" : "Logga in",
     "Password" : "Lösenord",
-    "Connected as {user}" : "Ansluten som {user}"
+    "Connected as {user}" : "Ansluten som {user}",
+    "Enable searching for emails" : "Aktivera sökning efter e-post",
+    "Warning, everything you type in the search bar will be sent to Zimbra." : "Varning, allt du skriver i sökfältet kommer att skickas till Zimbra."
 },
 "nplurals=2; plural=(n != 1);");
