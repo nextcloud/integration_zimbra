@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Bad HTTP method" : "Phương thức HTTP không hợp lệ",
     "Login" : "Đăng nhập",
-    "Password" : "Mật khẩu"
+    "Password" : "Mật khẩu",
+    "Connected as {user}" : "Kết nối bởi {user}"
 },
 "nplurals=1; plural=0;");
