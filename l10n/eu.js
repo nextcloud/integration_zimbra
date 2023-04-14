@@ -12,6 +12,8 @@ OC.L10N.register(
     "Login error" : "Saio-hasiera errorea",
     "Connected accounts" : "Konektatutako kontuak",
     "Zimbra integration" : "Zimbra integrazioa",
+    "Integration of Zimbra" : "Zimbra integrazioa",
+    "Default Zimbra server" : "Zimbra zerbitzari lehenetsia",
     "Login" : "Hasi saioa",
     "Zimbra login" : "Zimbra saio-hasiera",
     "Password" : "Pasahitza",
