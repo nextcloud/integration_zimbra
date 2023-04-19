@@ -32,7 +32,7 @@
     "Connect to Zimbra" : "Zimbra bağlantısı kur",
     "Connected as {user}" : "{user} olarak bağlantı kuruldu",
     "Disconnect from Zimbra" : "Zimbra bağlantısını kes",
-    "Enable searching for emails" : "E-potalarda arama yapılabilsin",
+    "Enable searching for emails" : "E-postalarda arama yapılabilsin",
     "Warning, everything you type in the search bar will be sent to Zimbra." : "Uyarı, arama çubuğuna yazdığınız her şey Zimbra üzerine gönderilecek.",
     "Enable navigation link (link to your Zimbra instance in the navigation menu)" : "Gezinma bağlantısı kullanılsın (gezinme menüsünde Zimbra kopyası bağlantısı)",
     "Successfully connected to Zimbra!" : "Zimbra ile bağlantı kuruldu!",
