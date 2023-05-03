@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Support Nextcloud 27
+
+### Fixed
+- Fix CI PHP version to allow Nextcloud 22
 
 ## 1.0.4 – 2022-12-13
 ### Changed
