@@ -2,7 +2,8 @@ OC.L10N.register(
     "integration_zimbra",
     {
     "Bad HTTP method" : "دالة HTTP  غير صحيحة",
-    "Bad credentials" : "رموز التعريف غير صحيحة",
+    "Bad credentials" : "معلومات تسجيل الدخول غير صحيحة",
+    "Invalid credentials" : "معلومات تسجيل الدخول غير صحيحة",
     "Connected accounts" : "حسابات مترابطة",
     "Login" : "الدخول",
     "Password" : "كلمة السر",
