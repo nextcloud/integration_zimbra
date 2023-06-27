@@ -4,6 +4,7 @@ OC.L10N.register(
     "Bad HTTP method" : "دالة HTTP  غير صحيحة",
     "Bad credentials" : "معلومات تسجيل الدخول غير صحيحة",
     "Invalid credentials" : "معلومات تسجيل الدخول غير صحيحة",
+    "Invalid response" : "إستجابة غير صحيحة",
     "Connected accounts" : "حسابات مترابطة",
     "Login" : "الدخول",
     "Password" : "كلمة السر",
