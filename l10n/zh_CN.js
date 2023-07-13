@@ -6,6 +6,7 @@ OC.L10N.register(
     "Connected accounts" : "关联账号",
     "Login" : "登录",
     "Password" : "密码",
-    "Connected as {user}" : "以 {user} 身份连接"
+    "Connected as {user}" : "以 {user} 身份连接",
+    "Invalid access token" : "无效的访问令牌"
 },
 "nplurals=1; plural=0;");
