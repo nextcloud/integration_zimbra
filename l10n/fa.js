@@ -5,6 +5,7 @@ OC.L10N.register(
     "Bad credentials" : "اعتبارنامه بد",
     "Connected accounts" : "حساب‌های متصل",
     "Login" : "ورود",
-    "Password" : "کلمه عبور"
+    "Password" : "کلمه عبور",
+    "Connected as {user}" : "متصل به عنوان {user}"
 },
 "nplurals=2; plural=(n > 1);");

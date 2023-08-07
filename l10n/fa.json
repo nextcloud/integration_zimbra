@@ -3,6 +3,7 @@
     "Bad credentials" : "اعتبارنامه بد",
     "Connected accounts" : "حساب‌های متصل",
     "Login" : "ورود",
-    "Password" : "کلمه عبور"
+    "Password" : "کلمه عبور",
+    "Connected as {user}" : "متصل به عنوان {user}"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
