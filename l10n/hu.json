@@ -18,6 +18,7 @@
     "Default Zimbra server" : "Alapértelmezett Zimbra-kiszolgáló",
     "Zimbra pre-auth key (optional)" : "Zimbra pre-auth kulcs (opcionális)",
     "Zimbra admin options saved" : "Zimbra rendszergazdai beállításai mentve",
+    "Failed to save Zimbra admin options" : "A Zimbra rendszergazdai beállításainak mentése sikertelen",
     "Zimbra instance address" : "Zimbra instansz cím",
     "Login" : "Bejelentkezés",
     "Zimbra login" : "Zimbra bejelentkezés",
@@ -32,11 +33,17 @@
     "Successfully connected to Zimbra!" : "Sikeresen kapcsolódott a Zimbra-hoz!",
     "Error connecting to Zimbra:" : "Hiba a Zimbra-val való csatlakozás során:",
     "Invalid access token" : "Érvénytelen hozzáférési token",
+    "Zimbra second factor is required" : "Zimbra második faktor szükséges",
+    "Invalid login/password or second factor" : "Hibás felhasználónév/jelszó vagy második faktor",
     "Invalid login/password" : "Érvénytelen bejelentkezés/jelszó",
     "Zimbra options saved" : "Zimbra beállítások elmentve",
+    "Failed to save Zimbra options" : "A Zimbra beállítások mentése sikertelen",
     "No Zimbra account connected" : "Nincs Zimbra-fiók csatlakoztatva",
     "Error connecting to Zimbra" : "Hiba a Zimbra-val való csatlakozás során",
     "No Zimbra unread email!" : "Nincs olvasatlan Zimbra email!",
-    "No Zimbra upcoming events!" : "Ninsc közelgő Zimbra esemény!"
+    "Failed to get Zimbra emails" : "A Zimbra emailek lekérdezése sikertelen",
+    "Failed to edit Zimbra todo" : "Nem sikerült szerkeszteni a Zimbra teendőt",
+    "No Zimbra upcoming events!" : "Nincs közelgő Zimbra esemény!",
+    "Failed to get Zimbra upcoming events" : "A Zimbra közelgő események lekérdezése sikertelen"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
