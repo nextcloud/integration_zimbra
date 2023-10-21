@@ -8,6 +8,7 @@ OC.L10N.register(
     "Password" : "Lösenord",
     "Connected as {user}" : "Ansluten som {user}",
     "Enable searching for emails" : "Aktivera sökning efter e-post",
-    "Warning, everything you type in the search bar will be sent to Zimbra." : "Varning, allt du skriver i sökfältet kommer att skickas till Zimbra."
+    "Warning, everything you type in the search bar will be sent to Zimbra." : "Varning, allt du skriver i sökfältet kommer att skickas till Zimbra.",
+    "Invalid access token" : "Ogiltig åtkomsttoken"
 },
 "nplurals=2; plural=(n != 1);");

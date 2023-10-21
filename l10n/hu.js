@@ -32,6 +32,7 @@ OC.L10N.register(
     "Connected as {user}" : "Kapcsolódva mint {user}",
     "Disconnect from Zimbra" : "Kapcsolat bontása a Zimbra-val",
     "Enable searching for emails" : "Email keresés engedélyezése",
+    "Warning, everything you type in the search bar will be sent to Zimbra." : "Figyelem, minden el lesz küldve a Zimbrának, amit a keresősávba ír.",
     "Successfully connected to Zimbra!" : "Sikeresen kapcsolódott a Zimbra-hoz!",
     "Error connecting to Zimbra:" : "Hiba a Zimbra-val való csatlakozás során:",
     "Invalid access token" : "Érvénytelen hozzáférési token",
