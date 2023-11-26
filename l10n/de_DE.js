@@ -23,7 +23,7 @@ OC.L10N.register(
     "A pre-auth key is required to refresh expired user sessions when 2FA is enabled on your Zimbra server." : "Ein Vorauthentifizierungsschlüssel ist erforderlich, um abgelaufene Benutzersitzungen zu aktualisieren, wenn 2FA auf Ihrem Zimbra-Server aktiviert ist.",
     "Zimbra pre-auth key (optional)" : "Zimbra Vorauthentifizierungsschlüssel (optional)",
     "Zimbra admin options saved" : "Zimbra-Administrationseinstellungen gespeichert",
-    "Failed to save Zimbra admin options" : "Fehler beim Speichern der Zimbra-Administrations-Einstellungen",
+    "Failed to save Zimbra admin options" : "Fehler beim Speichern der Zimbra-Administrationseinstellungen",
     "Zimbra instance address" : "Adresse der Zimbra-Instanz",
     "Login" : "Anmelden",
     "Zimbra login" : "Zimbra Anmeldung",
