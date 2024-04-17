@@ -1,0 +1,20 @@
+{
+    "name": "nextcloud/integration_zimbra",
+    "license": "AGPL-3.0",
+    "autoload": {
+        "psr-4": {
+            "OCA\\Zimbra\\": "lib/"
+        }
+    },
+    "require": {
+		"php": "^8.0"
+	},
+	"require-dev": {
+		"nextcloud/ocp": "dev-stable26"
+	},
+	"config": {
+		"platform": {
+			"php": "8.0"
+		}
+	}
+}
