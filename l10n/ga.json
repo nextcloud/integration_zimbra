@@ -6,6 +6,8 @@
     "Connected accounts" : "Cuntais nasctha",
     "Login" : "Logáil isteach",
     "Password" : "Pasfhocal",
-    "Connected as {user}" : "Ceangailte mar {user}"
+    "Connected as {user}" : "Ceangailte mar {user}",
+    "Invalid access token" : "Comhartha rochtana neamhbhailí",
+    "Invalid login/password" : "Logáil isteach/focal faire neamhbhailí"
 },"pluralForm" :"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);"
 }
