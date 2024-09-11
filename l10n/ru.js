@@ -17,6 +17,7 @@ OC.L10N.register(
     "Connected accounts" : "Подключённые учётные записи",
     "Zimbra integration" : "Интеграция Zimba",
     "Integration of Zimbra" : "Интеграция Zimba",
+    "Zimbra integration into Nextcloud provides a dashboard widget for unread emails,\n one for upcoming events, a search provider for emails and the ability to search for Zimbra contacts in Nextcloud.\n\nNextcloud will suggest your Zimbra contacts addresses when you search for a contact via the top-right contacts menu\nor when you search for someone to share a file to." : "Интеграция Zimbra в Nextcloud обеспечивает виджет панели управления для непрочитанных писем,\nодин для предстоящих событий, поисковую систему для писем и возможность поиска контактов Zimbra в Nextcloud.\n\nNextcloud предложит адреса ваших контактов Zimbra, когда вы ищете контакт через меню контактов в правом верхнем углу\nили когда вы ищете кого-то, с кем можно поделиться файлом.",
     "Default Zimbra server" : "Сервер Zimba по умолчанию",
     "Login" : "Войти",
     "Zimbra login" : "Вход в Zimbra",
