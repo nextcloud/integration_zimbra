@@ -37,7 +37,7 @@ OC.L10N.register(
     "Enable searching for emails" : "Habilitar la búsqueda de correos",
     "Warning, everything you type in the search bar will be sent to Zimbra." : "Advertencia, todo lo que escribas en la barra de búsqueda será enviado a Zimbra.",
     "Enable navigation link (link to your Zimbra instance in the navigation menu)" : "Habilitar el enlace de navegación (enlace a su instancia Zimbra en el menú de navegación)",
-    "Successfully connected to Zimbra!" : "¡Conectado exitósamente a Zimbra!",
+    "Successfully connected to Zimbra!" : "¡Se ha conectado correctamente a Zimbra!",
     "Error connecting to Zimbra:" : "Error al conectar con Zimbra:",
     "Invalid access token" : "Token de acceso inválido",
     "Zimbra second factor is required" : "Se requiere el segundo factor para Zimbra ",
