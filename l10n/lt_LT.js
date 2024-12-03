@@ -16,6 +16,7 @@ OC.L10N.register(
     "123456" : "123456",
     "Connected as {user}" : "Prisijungta kaip {user}",
     "Successfully connected to Zimbra!" : "Sėkmingai prisijungta prie „Zimbra“!",
-    "Error connecting to Zimbra:" : "Klaida jungiantis prie „Zimbra“:"
+    "Error connecting to Zimbra:" : "Klaida jungiantis prie „Zimbra“:",
+    "Invalid login/password" : "Neteisingas prisijungimas/slaptažodis"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");
