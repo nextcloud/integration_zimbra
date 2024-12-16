@@ -32,7 +32,7 @@ OC.L10N.register(
     "Second authentication factor" : "ئىككىنچى دەلىللەش ئامىلى",
     "123456" : "123456",
     "Connect to Zimbra" : "Zimbra غا ئۇلاڭ",
-    "Connected as {user}" : "{ئىشلەتكۈچى as قىلىپ ئۇلاندى",
+    "Connected as {user}" : "{user} as قىلىپ ئۇلاندى",
     "Disconnect from Zimbra" : "زىمبرادىن ئۈزۈڭ",
     "Enable searching for emails" : "ئېلېكترونلۇق خەت ئىزدەشنى قوزغىتىڭ",
     "Warning, everything you type in the search bar will be sent to Zimbra." : "ئاگاھلاندۇرۇش ، ئىزدەش ستونىغا يازغانلىرىڭىزنىڭ ھەممىسى زىمبراغا ئەۋەتىلىدۇ.",
