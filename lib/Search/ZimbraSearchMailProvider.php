@@ -22,20 +22,22 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
+
 namespace OCA\Zimbra\Search;
 
-use OCA\Zimbra\Service\ZimbraAPIService;
 use OCA\Zimbra\AppInfo\Application;
+use OCA\Zimbra\Service\ZimbraAPIService;
 use OCP\App\IAppManager;
+use OCP\IConfig;
 use OCP\IDateTimeFormatter;
 use OCP\IDateTimeZone;
 use OCP\IL10N;
-use OCP\IConfig;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\Search\IProvider;
 use OCP\Search\ISearchQuery;
 use OCP\Search\SearchResult;
+use OCP\Security\ICrypto;
 
 class ZimbraSearchMailProvider implements IProvider {
 
@@ -73,13 +75,16 @@ class ZimbraSearchMailProvider implements IProvider {
 	 * @param IURLGenerator $urlGenerator
 	 * @param ZimbraAPIService $service
 	 */
-	public function __construct(IAppManager $appManager,
-								IL10N $l10n,
-								IConfig $config,
-								IURLGenerator $urlGenerator,
-								IDateTimeFormatter $dateTimeFormatter,
-								IDateTimeZone $dateTimeZone,
-								ZimbraAPIService $service) {
+	public function __construct(
+		IAppManager $appManager,
+		IL10N $l10n,
+		IConfig $config,
+		IURLGenerator $urlGenerator,
+		IDateTimeFormatter $dateTimeFormatter,
+		IDateTimeZone $dateTimeZone,
+		ZimbraAPIService $service,
+		private ICrypto $crypto,
+	) {
 		$this->appManager = $appManager;
 		$this->l10n = $l10n;
 		$this->config = $config;
@@ -128,7 +133,7 @@ class ZimbraSearchMailProvider implements IProvider {
 		$offset = $query->getCursor();
 		$offset = $offset ? intval($offset) : 0;
 
-		$accessToken = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'token');
+		$accessToken = $this->crypto->decrypt($this->config->getUserValue($user->getUID(), Application::APP_ID, 'token'));
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$url = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 		$searchEmailsEnabled = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'search_mails_enabled', '0') === '1';
