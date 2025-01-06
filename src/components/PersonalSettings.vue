@@ -112,6 +112,7 @@ import axios from '@nextcloud/axios'
 import { delay } from '../utils.js'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import ZimbraIcon from './icons/ZimbraIcon.vue'
+import { confirmPassword } from '@nextcloud/password-confirmation'
 
 export default {
 	name: 'PersonalSettings',
@@ -169,18 +170,18 @@ export default {
 	},
 
 	methods: {
-		onLogoutClick() {
+		async onLogoutClick() {
+			await this.saveOptions({ token: '' }, true)
 			this.state.token = ''
 			this.login = ''
 			this.password = ''
 			this.twoFactorCode = ''
-			this.saveOptions({ token: '' })
 		},
 		onSearchChange(newValue) {
-			this.saveOptions({ search_mails_enabled: newValue ? '1' : '0' })
+			this.saveOptions({ search_mails_enabled: newValue ? '1' : '0' }, false)
 		},
 		onNavigationChange(newValue) {
-			this.saveOptions({ navigation_enabled: newValue ? '1' : '0' })
+			this.saveOptions({ navigation_enabled: newValue ? '1' : '0' }, false)
 		},
 		onInput() {
 			this.loading = true
@@ -194,14 +195,17 @@ export default {
 			delay(() => {
 				this.saveOptions({
 					url: this.state.url,
-				})
+				}, true)
 			}, 2000)()
 		},
-		saveOptions(values) {
+		async saveOptions(values, sensitive) {
+			if (sensitive) {
+				await confirmPassword()
+			}
 			const req = {
 				values,
 			}
-			const url = generateUrl('/apps/integration_zimbra/config')
+			const url = sensitive ? generateUrl('/apps/integration_zimbra/sensitive-config') : generateUrl('/apps/integration_zimbra/config')
 			axios.put(url, req).then((response) => {
 				if (response.data.user_name !== undefined) {
 					this.state.user_name = response.data.user_name
@@ -253,7 +257,7 @@ export default {
 				password: this.password,
 				url: this.state.url,
 				two_factor_code: this.twoFactorCode,
-			})
+			}, true)
 		},
 	},
 }

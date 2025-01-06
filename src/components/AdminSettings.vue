@@ -51,6 +51,9 @@ import axios from '@nextcloud/axios'
 import { delay } from '../utils.js'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 
+import { confirmPassword } from '@nextcloud/password-confirmation'
+import '@nextcloud/password-confirmation/dist/style.css'
+
 export default {
 	name: 'AdminSettings',
 
@@ -85,7 +88,8 @@ export default {
 				})
 			}, 2000)()
 		},
-		saveOptions(values) {
+		async saveOptions(values) {
+			await confirmPassword()
 			const req = {
 				values,
 			}
