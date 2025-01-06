@@ -18,11 +18,12 @@ use GuzzleHttp\Exception\ServerException;
 use OCA\Zimbra\AppInfo\Application;
 use OCP\App\IAppManager;
 use OCP\Http\Client\IClient;
+use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\PreConditionNotMetException;
+use OCP\Security\ICrypto;
 use Psr\Log\LoggerInterface;
-use OCP\Http\Client\IClientService;
 use Throwable;
 
 class ZimbraAPIService {
@@ -50,12 +51,15 @@ class ZimbraAPIService {
 	/**
 	 * Service to make requests to Zimbra API
 	 */
-	public function __construct (string $appName,
-								LoggerInterface $logger,
-								IL10N $l10n,
-								IConfig $config,
-								IAppManager $appManager,
-								IClientService $clientService) {
+	public function __construct(
+		string $appName,
+		LoggerInterface $logger,
+		IL10N $l10n,
+		IConfig $config,
+		IAppManager $appManager,
+		IClientService $clientService,
+		private ICrypto $crypto,
+	) {
 		$this->logger = $logger;
 		$this->l10n = $l10n;
 		$this->client = $clientService->newClient();
@@ -68,9 +72,9 @@ class ZimbraAPIService {
 		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 
 		$userName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
-		$token = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+		$token = $this->crypto->decrypt($this->config->getUserValue($userId, Application::APP_ID, 'token'));
 		$login = $this->config->getUserValue($userId, Application::APP_ID, 'login');
-		$password = $this->config->getUserValue($userId, Application::APP_ID, 'password');
+		$password = $this->crypto->decrypt($this->config->getUserValue($userId, Application::APP_ID, 'password'));
 		return $url && $userName && $token && $login && $password;
 	}
 
@@ -80,7 +84,7 @@ class ZimbraAPIService {
 			preg_match('/^(\d+)\.(\d+)\.(\d+)_/', $rawVersion, $matches);
 			if (count($matches) > 2) {
 				return [$matches[1], $matches[2], $matches[3]];
-			};
+			}
 		}
 		return [0, 0, 0];
 	}
@@ -162,7 +166,7 @@ class ZimbraAPIService {
 				'_content' => $queryString,
 			],
 			'sortBy' => 'dateAsc',
-			'fetch' =>  'all',
+			'fetch' => 'all',
 			'offset' => 0,
 			'limit' => 100,
 			'types' => 'appointment',
@@ -175,7 +179,7 @@ class ZimbraAPIService {
 			return $eventResp;
 		}
 		$events = $eventResp['Body']['SearchResponse']['appt'] ?? [];
-		usort($events, static function(array $a, array $b) {
+		usort($events, static function (array $a, array $b) {
 			$aStart = $a['inst'][0]['s'];
 			$bStart = $b['inst'][0]['s'];
 			return ($aStart < $bStart) ? -1 : 1;
@@ -202,7 +206,7 @@ class ZimbraAPIService {
 		$emails = $result['m'] ?? [];
 
 		// sort emails by date, DESC, recents first
-		usort($emails, function($a, $b) {
+		usort($emails, function ($a, $b) {
 			return ($a['d'] > $b['d']) ? -1 : 1;
 		});
 
@@ -226,7 +230,7 @@ class ZimbraAPIService {
 		$emails = $result['m'] ?? [];
 
 		// sort emails by date, DESC, recents first
-		usort($emails, function($a, $b) {
+		usort($emails, function ($a, $b) {
 			return ($a['d'] > $b['d']) ? -1 : 1;
 		});
 
@@ -243,19 +247,19 @@ class ZimbraAPIService {
 	 * @throws Exception
 	 */
 	public function restRequest(string $userId, string $endPoint, array $params = [], string $method = 'GET',
-								bool $jsonResponse = true): array {
+		bool $jsonResponse = true): array {
 		$tokenIsOk = $this->checkTokenExpiration($userId);
 		if (!$tokenIsOk) {
 			return ['error' => $this->l10n->t('Your Zimbra session has expired, please re-authenticate in your user settings.')];
 		}
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
-		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+		$accessToken = $this->crypto->decrypt($this->config->getUserValue($userId, Application::APP_ID, 'token'));
 		try {
 			$url = $url . '/' . $endPoint;
 			$options = [
 				'headers' => [
-					'User-Agent'  => Application::INTEGRATION_USER_AGENT,
+					'User-Agent' => Application::INTEGRATION_USER_AGENT,
 				],
 			];
 
@@ -347,20 +351,20 @@ class ZimbraAPIService {
 	 * @throws PreConditionNotMetException
 	 */
 	public function soapRequest(string $userId, string $function, string $ns, array $params = [],
-								bool $jsonResponse = true): array {
+		bool $jsonResponse = true): array {
 		$tokenIsOk = $this->checkTokenExpiration($userId);
 		if (!$tokenIsOk) {
 			return ['error' => $this->l10n->t('Your Zimbra session has expired, please re-authenticate in your user settings.')];
 		}
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
-		$accessToken = $this->config->getUserValue($userId, Application::APP_ID, 'token');
+		$accessToken = $this->crypto->decrypt($this->config->getUserValue($userId, Application::APP_ID, 'token'));
 		$zimbraUserName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
 		try {
 			$url = $url . '/service/soap';
 			$options = [
 				'headers' => [
-					'User-Agent'  => Application::INTEGRATION_USER_AGENT,
+					'User-Agent' => Application::INTEGRATION_USER_AGENT,
 					'Content-Type' => 'application/json',
 				],
 			];
@@ -413,14 +417,14 @@ class ZimbraAPIService {
 	 * @return array
 	 */
 	public function login(string $userId, string $login, string $password,
-						  ?string $twoFactorCode = null): array {
+		?string $twoFactorCode = null): array {
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$baseUrl = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 		try {
 			$url = $baseUrl . '/service/soap';
 			$options = [
 				'headers' => [
-					'User-Agent'  => Application::INTEGRATION_USER_AGENT,
+					'User-Agent' => Application::INTEGRATION_USER_AGENT,
 					'Content-Type' => 'application/json',
 				],
 			];
@@ -459,13 +463,13 @@ class ZimbraAPIService {
 						$twoFactorAuthRequired = $r['Body']['AuthResponse']['twoFactorAuthRequired']['_content'] ?? '';
 						return [
 							'token' => $token,
-							'token_lifetime' => (int) ($r['Body']['AuthResponse']['lifetime'] ?? 0),
+							'token_lifetime' => (int)($r['Body']['AuthResponse']['lifetime'] ?? 0),
 							'two_factor_required' => $twoFactorAuthRequired === 'true',
 							//'requestBody' => $bodyArray,
 							//'responseBody' => $r,
 						];
 					}
-				} catch (Exception | Throwable $e) {
+				} catch (Exception|Throwable $e) {
 				}
 				$this->logger->warning('Zimbra login error : Invalid response', ['app' => Application::APP_ID]);
 				return ['error' => $this->l10n->t('Invalid response')];
@@ -475,7 +479,7 @@ class ZimbraAPIService {
 			$body = $response->getBody();
 			$this->logger->warning('Zimbra login server error : ' . $body, ['app' => Application::APP_ID]);
 			return ['error' => $this->l10n->t('Login server error')];
-		} catch (Exception | Throwable $e) {
+		} catch (Exception|Throwable $e) {
 			$this->logger->warning('Zimbra login error : ' . $e->getMessage(), ['app' => Application::APP_ID]);
 			return ['error' => $this->l10n->t('Login error')];
 		}
@@ -492,11 +496,11 @@ class ZimbraAPIService {
 		$tokenExpiresAt = $this->config->getUserValue($userId, Application::APP_ID, 'token_expires_at');
 		if ($tokenExpiresAt !== '') {
 			$nowTs = (new DateTime())->getTimestamp();
-			$tokenExpiresAt = (int) $tokenExpiresAt;
+			$tokenExpiresAt = (int)$tokenExpiresAt;
 			if ($nowTs > $tokenExpiresAt - 60) {
 				// try login with credentials
 				$login = $this->config->getUserValue($userId, Application::APP_ID, 'login');
-				$password = $this->config->getUserValue($userId, Application::APP_ID, 'password');
+				$password = $this->crypto->decrypt($this->config->getUserValue($userId, Application::APP_ID, 'password'));
 				$loginResult = $this->login($userId, $login, $password);
 				if (isset($loginResult['error'])) {
 					$this->logger->debug('Zimbra token refresh error : ' . $loginResult['error'], ['app' => Application::APP_ID]);
@@ -510,7 +514,7 @@ class ZimbraAPIService {
 						return false;
 					}
 					if ($nowTs <= $twoFactorExpiresAt) {
-						$preAuthKey = $this->config->getAppValue(Application::APP_ID, 'pre_auth_key');
+						$preAuthKey = $this->crypto->decrypt($this->config->getAppValue(Application::APP_ID, 'pre_auth_key'));
 						if ($preAuthKey) {
 							$preAuthResult = $this->preAuth($userId, $login);
 							if (isset($preAuthResult['token'])) {
@@ -544,14 +548,14 @@ class ZimbraAPIService {
 	}
 
 	public function preAuth(string $userId, string $login): array {
-		$preAuthKey = $this->config->getAppValue(Application::APP_ID, 'pre_auth_key');
+		$preAuthKey = $this->crypto->decrypt($this->config->getAppValue(Application::APP_ID, 'pre_auth_key'));
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$baseUrl = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 		try {
 			$url = $baseUrl . '/service/soap/preauth';
 			$options = [
 				'headers' => [
-					'User-Agent'  => Application::INTEGRATION_USER_AGENT,
+					'User-Agent' => Application::INTEGRATION_USER_AGENT,
 					'Content-Type' => 'application/json',
 				],
 			];
@@ -589,10 +593,10 @@ class ZimbraAPIService {
 						$token = $r['Body']['AuthResponse']['authToken'][0]['_content'];
 						return [
 							'token' => $token,
-							'token_lifetime' => (int) ($r['Body']['AuthResponse']['lifetime'] ?? 0),
+							'token_lifetime' => (int)($r['Body']['AuthResponse']['lifetime'] ?? 0),
 						];
 					}
-				} catch (Exception | Throwable $e) {
+				} catch (Exception|Throwable $e) {
 				}
 				$this->logger->warning('Zimbra preauth error : Invalid response', ['app' => Application::APP_ID]);
 				return ['error' => $this->l10n->t('Invalid response')];
@@ -600,10 +604,10 @@ class ZimbraAPIService {
 		} catch (ServerException $e) {
 			$response = $e->getResponse();
 			$body = $response->getBody();
-			$this->logger->warning('Zimbra preauth server error : '.$body, ['app' => Application::APP_ID]);
+			$this->logger->warning('Zimbra preauth server error : ' . $body, ['app' => Application::APP_ID]);
 			return ['error' => $e->getMessage()];
-		} catch (Exception | Throwable $e) {
-			$this->logger->warning('Zimbra preauth error : '.$e->getMessage(), ['app' => Application::APP_ID]);
+		} catch (Exception|Throwable $e) {
+			$this->logger->warning('Zimbra preauth error : ' . $e->getMessage(), ['app' => Application::APP_ID]);
 			return ['error' => $e->getMessage()];
 		}
 	}
@@ -634,7 +638,7 @@ class ZimbraAPIService {
 	private function getLoginRequestHeader(): array {
 		return [
 			'context' => [
-				'_jsns' =>'urn:zimbra',
+				'_jsns' => 'urn:zimbra',
 				'userAgent' => [
 					'name' => Application::INTEGRATION_USER_AGENT,
 					'version' => $this->appVersion,
@@ -681,6 +685,6 @@ class ZimbraAPIService {
 			$ipad[$i] = $ipad[$i] ^ $key[$i];
 		}
 
-		return sha1($opad.sha1($ipad.$data, true));
+		return sha1($opad . sha1($ipad . $data, true));
 	}
 }

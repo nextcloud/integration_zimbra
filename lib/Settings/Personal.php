@@ -1,12 +1,13 @@
 <?php
+
 namespace OCA\Zimbra\Settings;
 
+use OCA\Zimbra\AppInfo\Application;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
+use OCP\Security\ICrypto;
 use OCP\Settings\ISettings;
-
-use OCA\Zimbra\AppInfo\Application;
 
 class Personal implements ISettings {
 
@@ -23,9 +24,12 @@ class Personal implements ISettings {
 	 */
 	private $userId;
 
-	public function __construct(IConfig $config,
-								IInitialState $initialStateService,
-								?string $userId) {
+	public function __construct(
+		IConfig $config,
+		IInitialState $initialStateService,
+		?string $userId,
+		private ICrypto $crypto,
+	) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->userId = $userId;
@@ -35,7 +39,7 @@ class Personal implements ISettings {
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
-		$token = $this->config->getUserValue($this->userId, Application::APP_ID, 'token');
+		$token = $this->crypto->decrypt($this->config->getUserValue($this->userId, Application::APP_ID, 'token'));
 		$searchMailsEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'search_mails_enabled', '0') === '1';
 		$navigationEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'navigation_enabled', '0') === '1';
 		$zimbraUserId = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_id');
