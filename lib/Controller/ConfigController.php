@@ -12,6 +12,7 @@
 namespace OCA\Zimbra\Controller;
 
 use DateTime;
+use OCP\AppFramework\OCS\OCSForbiddenException;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\AppFramework\Http\DataResponse;
@@ -48,14 +49,15 @@ class ConfigController extends Controller {
 	}
 
 	/**
-	 * set config values
+	 * set sensitive config values
 	 * @NoAdminRequired
+	 * @PasswordConfirmationRequired
 	 *
 	 * @param array $values
 	 * @return DataResponse
 	 * @throws PreConditionNotMetException
 	 */
-	public function setConfig(array $values): DataResponse {
+	public function setSensitiveConfig(array $values): DataResponse {
 		if (isset($values['url'], $values['login'], $values['password'])) {
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'url', $values['url']);
 			$secondFactor = ($values['two_factor_code'] ?? null) ?: null;
@@ -86,6 +88,27 @@ class ConfigController extends Controller {
 			$this->config->deleteUserValue($this->userId, Application::APP_ID, 'token_expires_at');
 		}
 		return new DataResponse($result);
+	}
+
+	/**
+	 * set config values
+	 * @NoAdminRequired
+	 *
+	 * @param array $values
+	 * @return DataResponse
+	 * @throws PreConditionNotMetException
+	 * @throws OCSForbiddenException
+	 */
+	public function setConfig(array $values): DataResponse {
+		foreach ($values as $key => $value) {
+			if (in_array($key, ['url', 'login', 'password', 'token'])) {
+				throw new OCSForbiddenException();
+			}
+
+			$this->config->setUserValue($this->userId, Application::APP_ID, $key, $value);
+		}
+
+		return new DataResponse();
 	}
 
 	/**
@@ -163,6 +186,7 @@ class ConfigController extends Controller {
 	 *
 	 * @param array $values
 	 * @return DataResponse
+	 * @PasswordConfirmationRequired
 	 */
 	public function setAdminConfig(array $values): DataResponse {
 		foreach ($values as $key => $value) {

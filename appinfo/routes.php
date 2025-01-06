@@ -13,6 +13,7 @@ return [
 	'routes' => [
 		['name' => 'config#isUserConnected', 'url' => '/is-connected', 'verb' => 'GET'],
 		['name' => 'config#setConfig', 'url' => '/config', 'verb' => 'PUT'],
+		['name' => 'config#setSensitiveConfig', 'url' => '/sensitive-config', 'verb' => 'PUT'],
 		['name' => 'config#setAdminConfig', 'url' => '/admin-config', 'verb' => 'PUT'],
 
 		['name' => 'zimbraAPI#getContacts', 'url' => '/contacts', 'verb' => 'GET'],
