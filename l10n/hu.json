@@ -15,6 +15,7 @@
     "Connected accounts" : "Kapcsolt fiókok",
     "Zimbra integration" : "Zimbra integráció",
     "Integration of Zimbra" : "A Zimbra integrációja",
+    "Zimbra integration into Nextcloud provides a dashboard widget for unread emails,\n one for upcoming events, a search provider for emails and the ability to search for Zimbra contacts in Nextcloud.\n\nNextcloud will suggest your Zimbra contacts addresses when you search for a contact via the top-right contacts menu\nor when you search for someone to share a file to." : "A Zimbra Nextcloud integrációja, lehetővé teszi a nem olvasott e-mailek,\na közelgő események megjelenítését, e-mail kereső megjelenítését,   lehetőséget hogy keressen a Zimbra kapcsolatai között az irányítópulton Nextcloud-ban.\nNextcloud felajálnja a Zimbra kapcsolatokat mikor keress a jobb felső mezőben\nvagy mikor keres valakit, hogy megosszon egy fájlt.",
     "Default Zimbra server" : "Alapértelmezett Zimbra-kiszolgáló",
     "Zimbra pre-auth key (optional)" : "Zimbra előazonosítási kulcs (nem kötelező)",
     "Zimbra admin options saved" : "A Zimbra rendszergazdai beállításai mentve",
