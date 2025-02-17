@@ -35,11 +35,18 @@ class Personal implements ISettings {
 		$this->userId = $userId;
 	}
 
+	private function decryptIfNotEmpty(string $value): string {
+		if ($value === '') {
+			return $value;
+		}
+		return $this->crypto->decrypt($value);
+	}
+
 	/**
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
-		$token = $this->crypto->decrypt($this->config->getUserValue($this->userId, Application::APP_ID, 'token'));
+		$token = $this->decryptIfNotEmpty($this->config->getUserValue($this->userId, Application::APP_ID, 'token'));
 		$searchMailsEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'search_mails_enabled', '0') === '1';
 		$navigationEnabled = $this->config->getUserValue($this->userId, Application::APP_ID, 'navigation_enabled', '0') === '1';
 		$zimbraUserId = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_id');
