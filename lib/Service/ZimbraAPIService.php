@@ -67,14 +67,21 @@ class ZimbraAPIService {
 		$this->appVersion = $appManager->getAppVersion(Application::APP_ID);
 	}
 
+	private function decryptIfNotEmpty(string $value): string {
+		if ($value === '') {
+			return $value;
+		}
+		return $this->crypto->decrypt($value);
+	}
+
 	public function isUserConnected(string $userId): bool {
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 
 		$userName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
-		$token = $this->crypto->decrypt($this->config->getUserValue($userId, Application::APP_ID, 'token'));
+		$token = $this->decryptIfNotEmpty($this->config->getUserValue($userId, Application::APP_ID, 'token'));
 		$login = $this->config->getUserValue($userId, Application::APP_ID, 'login');
-		$password = $this->crypto->decrypt($this->config->getUserValue($userId, Application::APP_ID, 'password'));
+		$password = $this->decryptIfNotEmpty($this->config->getUserValue($userId, Application::APP_ID, 'password'));
 		return $url && $userName && $token && $login && $password;
 	}
 
@@ -254,7 +261,7 @@ class ZimbraAPIService {
 		}
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
-		$accessToken = $this->crypto->decrypt($this->config->getUserValue($userId, Application::APP_ID, 'token'));
+		$accessToken = $this->decryptIfNotEmpty($this->config->getUserValue($userId, Application::APP_ID, 'token'));
 		try {
 			$url = $url . '/' . $endPoint;
 			$options = [
@@ -358,7 +365,7 @@ class ZimbraAPIService {
 		}
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$url = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
-		$accessToken = $this->crypto->decrypt($this->config->getUserValue($userId, Application::APP_ID, 'token'));
+		$accessToken = $this->decryptIfNotEmpty($this->config->getUserValue($userId, Application::APP_ID, 'token'));
 		$zimbraUserName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
 		try {
 			$url = $url . '/service/soap';
@@ -500,7 +507,7 @@ class ZimbraAPIService {
 			if ($nowTs > $tokenExpiresAt - 60) {
 				// try login with credentials
 				$login = $this->config->getUserValue($userId, Application::APP_ID, 'login');
-				$password = $this->crypto->decrypt($this->config->getUserValue($userId, Application::APP_ID, 'password'));
+				$password = $this->decryptIfNotEmpty($this->config->getUserValue($userId, Application::APP_ID, 'password'));
 				$loginResult = $this->login($userId, $login, $password);
 				if (isset($loginResult['error'])) {
 					$this->logger->debug('Zimbra token refresh error : ' . $loginResult['error'], ['app' => Application::APP_ID]);
@@ -514,7 +521,7 @@ class ZimbraAPIService {
 						return false;
 					}
 					if ($nowTs <= $twoFactorExpiresAt) {
-						$preAuthKey = $this->crypto->decrypt($this->config->getAppValue(Application::APP_ID, 'pre_auth_key'));
+						$preAuthKey = $this->decryptIfNotEmpty($this->config->getAppValue(Application::APP_ID, 'pre_auth_key'));
 						if ($preAuthKey) {
 							$preAuthResult = $this->preAuth($userId, $login);
 							if (isset($preAuthResult['token'])) {
@@ -548,7 +555,7 @@ class ZimbraAPIService {
 	}
 
 	public function preAuth(string $userId, string $login): array {
-		$preAuthKey = $this->crypto->decrypt($this->config->getAppValue(Application::APP_ID, 'pre_auth_key'));
+		$preAuthKey = $this->decryptIfNotEmpty($this->config->getAppValue(Application::APP_ID, 'pre_auth_key'));
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$baseUrl = $this->config->getUserValue($userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
 		try {

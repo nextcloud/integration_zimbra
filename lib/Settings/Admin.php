@@ -29,12 +29,19 @@ class Admin implements ISettings {
 		$this->initialStateService = $initialStateService;
 	}
 
+	private function decryptIfNotEmpty(string $value): string {
+		if ($value === '') {
+			return $value;
+		}
+		return $this->crypto->decrypt($value);
+	}
+
 	/**
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
-		$preAuthKey = $this->crypto->decrypt($this->config->getAppValue(Application::APP_ID, 'pre_auth_key'));
+		$preAuthKey = $this->decryptIfNotEmpty($this->config->getAppValue(Application::APP_ID, 'pre_auth_key'));
 
 		$adminConfig = [
 			'admin_instance_url' => $adminUrl,
