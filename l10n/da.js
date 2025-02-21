@@ -1,7 +1,7 @@
 OC.L10N.register(
     "integration_zimbra",
     {
-    "Bad HTTP method" : "Dårlig HTTP-metode",
+    "Bad HTTP method" : "Dårlig HTTP metode",
     "Bad credentials" : "Forkerte legitimationsoplysninger",
     "Invalid credentials" : "Ugyldige legitimationsoplysninger",
     "Connected accounts" : "Forbundne konti",
