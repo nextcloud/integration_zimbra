@@ -14,6 +14,7 @@
     "Connected accounts" : "Ühendatud kasutajakontod",
     "Zimbra integration" : "Lõiming Zimbra servreriga",
     "Integration of Zimbra" : "Lõiming Zimbra servreriga",
+    "Invalid access token" : "Vigane tunnusluba ligipääsuks",
     "Invalid login/password" : "Vigane kasutajanimi või salasõna",
     "Zimbra options saved" : "Zimbra eelistused on salvestatud",
     "Failed to save Zimbra options" : "Zimbra eelistuste salvestamine ei õnnestunud",
