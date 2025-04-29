@@ -19,7 +19,7 @@ OC.L10N.register(
     "Integration of Zimbra" : "Integration von Zimbra",
     "Zimbra integration into Nextcloud provides a dashboard widget for unread emails,\n one for upcoming events, a search provider for emails and the ability to search for Zimbra contacts in Nextcloud.\n\nNextcloud will suggest your Zimbra contacts addresses when you search for a contact via the top-right contacts menu\nor when you search for someone to share a file to." : "Die Zimbra-Integration in Nextcloud bietet ein Dashboard-Widget für ungelesene E-Mails,\neine für bevorstehende Veranstaltungen, einen Suchanbieter für E-Mails und die Möglichkeit, in Nextcloud nach Zimbra-Kontakten zu suchen.\n\nNextcloud schlägt die Adressen Ihrer Zimbra-Kontakte vor, wenn Sie über das Kontaktmenü oben rechts nach einem Kontakt suchen\noder wenn Sie nach jemandem suchen, mit dem Sie eine Datei teilen können.",
     "Zimbra admin options saved" : "Zimbra-Administrationseinstellungen gespeichert",
-    "Failed to save Zimbra admin options" : "Fehler beim Speichern der Zimbra-Administrationseinstellungen",
+    "Failed to save Zimbra admin options" : "Zimbra-Administrationseinstellungen konnten nicht gespeichert werden",
     "Default Zimbra server" : "Standard-Zimbra-Server",
     "You can get a Zimbra pre-auth key by running \"zmprov generateDomainPreAuthKey domain.com\"" : "Sie können einen Zimbra Pre-Auth Key erhalten, indem Sie \"zmprov generateDomainPreAuthKey domain.com\" ausführen.",
     "A pre-auth key is required to refresh expired user sessions when 2FA is enabled on your Zimbra server." : "Ein Vorauthentifizierungsschlüssel ist erforderlich, um abgelaufene Benutzersitzungen zu aktualisieren, wenn 2FA auf Ihrem Zimbra-Server aktiviert ist.",
@@ -31,7 +31,7 @@ OC.L10N.register(
     "Invalid login/password or second factor" : "Falscher Benutzername/Passwort oder zweiter Faktor",
     "Invalid login/password" : "Ungültige Anmeldedaten/Passwort",
     "Zimbra options saved" : "Zimbra-Einstellungen gespeichert",
-    "Failed to save Zimbra options" : "Fehler beim Speichern der Zimbra-Einstellungen",
+    "Failed to save Zimbra options" : "Zimbra-Einstellungen konnten nicht gespeichert werden",
     "Zimbra instance address" : "Adresse der Zimbra-Instanz",
     "Login" : "Anmelden",
     "Zimbra login" : "Zimbra Anmeldung",
@@ -48,8 +48,8 @@ OC.L10N.register(
     "No Zimbra account connected" : "Kein Zimbra-Konto verbunden",
     "Error connecting to Zimbra" : "Fehler beim Verbinden mit Zimbra",
     "No Zimbra unread email!" : "Keine ungelesene E-Mails bei Zimbra",
-    "Failed to get Zimbra emails" : "Fehler beim Abruf der Zimbra-E-Mails",
+    "Failed to get Zimbra emails" : "Zimbra-E-Mails konnten nicht abgerufen werden",
     "No Zimbra upcoming events!" : "Keine anstehenden Zimbra-Termine!",
-    "Failed to get Zimbra upcoming events" : "Fehler beim Abrufen der anstehenden Zimbra-Termine"
+    "Failed to get Zimbra upcoming events" : "Anstehende Zimbra-Termine konnten nicht abgerufen werden"
 },
 "nplurals=2; plural=(n != 1);");
