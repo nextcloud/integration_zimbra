@@ -2,6 +2,7 @@
     "Bad HTTP method" : "Foute HTTP methode",
     "Bad credentials" : "Foute inloggegevens",
     "Connected accounts" : "Verbonden accounts",
+    "Zimbra integration into Nextcloud provides a dashboard widget for unread emails,\n one for upcoming events, a search provider for emails and the ability to search for Zimbra contacts in Nextcloud.\n\nNextcloud will suggest your Zimbra contacts addresses when you search for a contact via the top-right contacts menu\nor when you search for someone to share a file to." : "De integratie van Zimbra in Nextcloud biedt een dashboardwidget voor ongelezen e-mails,\neen voor aankomende evenementen, een zoekprovider voor e-mails en de mogelijkheid om te zoeken naar Zimbra-contacten in Nextcloud.\n\nNextcloud stelt jouw Zimbra-contactadressen voor wanneer je naar een contact zoekt via het menu met contactpersonen rechtsboven \nof wanneer je zoekt naar iemand waarmee je een bestand kunt delen.",
     "Login" : "Inloggen",
     "Password" : "Wachtwoord",
     "Connected as {user}" : "Verbonden als {user}"
