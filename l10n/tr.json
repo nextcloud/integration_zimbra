@@ -20,7 +20,7 @@
     "Failed to save Zimbra admin options" : "Zimbra yönetici ayarları kaydedilemedi",
     "Default Zimbra server" : "Varsaylan Zimbra sunucusu",
     "You can get a Zimbra pre-auth key by running \"zmprov generateDomainPreAuthKey domain.com\"" : "Zimbra ön kimlik doğrulaması anahtarı almak için \"zmprov createDomainPreAuthKey domain.com\" komutunu yürütebilirsiniz",
-    "A pre-auth key is required to refresh expired user sessions when 2FA is enabled on your Zimbra server." : "Zimbra sunucunuzda iki adımlı doğrulama etkinleştirildiğinde, geçerlilik süresi dolan kullanıcı oturumlarını yenilemek için bir ön kimlik doğrulama anahtarı gereklidir.",
+    "A pre-auth key is required to refresh expired user sessions when 2FA is enabled on your Zimbra server." : "Zimbra sunucunuzda iki adımlı doğrulama açıldığında, geçerlilik süresi dolan kullanıcı oturumlarını yenilemek için bir ön kimlik doğrulama anahtarı gereklidir.",
     "Zimbra pre-auth key (optional)" : "Zimbra ön kimlik doğrulaması anahtarı (isteğe bağlı)",
     "Successfully connected to Zimbra!" : "Zimbra ile bağlantı kuruldu!",
     "Error connecting to Zimbra:" : "Zimbra ile bağlantı kurulurken sorun çıktı:",
