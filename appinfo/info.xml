@@ -8,7 +8,7 @@
 
 Nextcloud will suggest your Zimbra contacts addresses when you search for a contact via the top-right contacts menu
 or when you search for someone to share a file to.]]></description>
-	<version>1.0.13</version>
+	<version>1.0.14</version>
 	<licence>agpl</licence>
 	<author>Julien Veyssier</author>
 	<namespace>Zimbra</namespace>
@@ -22,7 +22,7 @@ or when you search for someone to share a file to.]]></description>
 	<screenshot>https://github.com/eneiluj/integration_zimbra/raw/master/img/screenshot1.jpg</screenshot>
 	<screenshot>https://github.com/eneiluj/integration_zimbra/raw/master/img/screenshot2.jpg</screenshot>
 	<dependencies>
-		<nextcloud min-version="26" max-version="31"/>
+		<nextcloud min-version="26" max-version="32"/>
 	</dependencies>
 	<settings>
 		<admin>OCA\Zimbra\Settings\Admin</admin>
