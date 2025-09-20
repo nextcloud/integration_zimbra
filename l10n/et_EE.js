@@ -43,7 +43,7 @@ OC.L10N.register(
     "Connected as {user}" : "Ühendatud kui {user}",
     "Disconnect from Zimbra" : "Katkesta Zimbra ühendus",
     "Enable searching for emails" : "Lülita e-kirjade otsing sisse",
-    "Warning, everything you type in the search bar will be sent to Zimbra." : "Hoiatus, kõik otsinguribale sisestatud saadetakse Zimbrale.",
+    "Warning, everything you type in the search bar will be sent to Zimbra." : "Hoiatus, kõik otsinguribale sisestatud andmed saadetakse Zimbrale.",
     "Enable navigation link (link to your Zimbra instance in the navigation menu)" : "Lisa link menüüsse (Zimbra serveri link Nextcloudi menüüs)",
     "No Zimbra account connected" : "Ühtegi Zimbra kaskutajakontot pole seotud",
     "Error connecting to Zimbra" : "Viga ühenduse loomisel Zimbraga",
