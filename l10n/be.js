@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Zimbra" : "Zimbra",
     "Login error" : "Памылка ўваходу",
+    "Invalid access token" : "Памылковы токен доступу",
     "Login" : "Лагін",
     "Password" : "Пароль",
     "123456" : "123456"
