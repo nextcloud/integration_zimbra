@@ -33,7 +33,7 @@ OC.L10N.register(
     "Zimbra options saved" : "Zimbra eelistused on salvestatud",
     "Failed to save Zimbra options" : "Zimbra eelistuste salvestamine ei õnnestunud",
     "Zimbra instance address" : "Zimbra serveri aadress",
-    "Login" : "Logi sisse",
+    "Login" : "Kasutajanimi",
     "Zimbra login" : "Zimbra kasutajanimi",
     "Password" : "Salasõna",
     "Zimbra password" : "Zimbra salasõna",
