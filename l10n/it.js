@@ -5,6 +5,7 @@ OC.L10N.register(
     "Bad HTTP method" : "Metodo HTTP non corretto",
     "Bad credentials" : "Credenziali non valide",
     "Connected accounts" : "Account connessi",
+    "Invalid access token" : "Token di accesso non valido",
     "Login" : "Accedi",
     "Password" : "Password",
     "123456" : "123456",
