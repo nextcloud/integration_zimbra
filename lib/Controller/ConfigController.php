@@ -141,7 +141,7 @@ class ConfigController extends Controller {
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'login', $login);
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'password', $this->crypto->encrypt($password));
 
-			$this->config->setUserValue($this->userId, Application::APP_ID, 'token', $result['token']);
+			$this->config->setUserValue($this->userId, Application::APP_ID, 'token', $this->crypto->encrypt($result['token']));
 			$this->config->setUserValue($this->userId, Application::APP_ID, 'user_name', $login);
 			$nowTs = (new DateTime())->getTimestamp();
 			if ($twoFactorCode !== null) {

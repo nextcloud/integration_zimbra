@@ -525,7 +525,7 @@ class ZimbraAPIService {
 						if ($preAuthKey) {
 							$preAuthResult = $this->preAuth($userId, $login);
 							if (isset($preAuthResult['token'])) {
-								$this->config->setUserValue($userId, Application::APP_ID, 'token', $preAuthResult['token']);
+								$this->config->setUserValue($userId, Application::APP_ID, 'token', $this->crypto->encrypt($preAuthResult['token']));
 								$tokenExpireAt = $nowTs + (int)($preAuthResult['token_lifetime'] / 1000);
 								$this->config->setUserValue($userId, Application::APP_ID, 'token_expires_at', (string)$tokenExpireAt);
 								return true;
