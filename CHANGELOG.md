@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## 1.0.15 - 2025-01-15
+## 1.0.16 - 2026-04-20
+### Fixed
+- Encrypt token before storing in user config
+
+## 1.0.15 - 2026-01-15
 ### Added
 - Support Nextcloud 33
 
