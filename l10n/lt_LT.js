@@ -5,6 +5,7 @@ OC.L10N.register(
     "Zimbra events" : "„Zimbra“ įvykiai",
     "Bad HTTP method" : "Blogas HTTP metodas",
     "Bad credentials" : "Blogi prisijungimo duomenys",
+    "Invalid credentials" : "Neteisingi prisijungimo duomenys",
     "Connected accounts" : "Prijungtos paskyros",
     "Zimbra integration" : "„Zimbra“ integracija",
     "Integration of Zimbra" : "„Zimbra“ integracija",
