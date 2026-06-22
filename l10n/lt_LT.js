@@ -12,7 +12,7 @@ OC.L10N.register(
     "Default Zimbra server" : "Numatytasis „Zimbra“ serveris",
     "Successfully connected to Zimbra!" : "Sėkmingai prisijungta prie „Zimbra“!",
     "Error connecting to Zimbra:" : "Klaida jungiantis prie „Zimbra“:",
-    "Invalid access token" : "Neteisingas prieigos raktas",
+    "Invalid access token" : "Neteisingas prieigos žymuo",
     "Invalid login/password" : "Neteisingas prisijungimas/slaptažodis",
     "Zimbra instance address" : "„Zimbra“ egzemplioriaus adresas",
     "Login" : "Prisijungti",
