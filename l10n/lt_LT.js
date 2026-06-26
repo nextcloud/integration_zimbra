@@ -6,6 +6,7 @@ OC.L10N.register(
     "Bad HTTP method" : "Blogas HTTP metodas",
     "Bad credentials" : "Blogi prisijungimo duomenys",
     "Invalid credentials" : "Neteisingi prisijungimo duomenys",
+    "Invalid response" : "Neteisingas atsakymas",
     "Connected accounts" : "Prijungtos paskyros",
     "Zimbra integration" : "„Zimbra“ integracija",
     "Integration of Zimbra" : "„Zimbra“ integracija",
