@@ -1,14 +1,25 @@
 { "translations": {
     "Zimbra emails" : "E-mails do Zimbra",
+    "Your Zimbra session has expired, please re-authenticate in your user settings." : "Sua sessão do Zimbra expirou, por favor, reautentique em suas preferencias pessoais.",
     "Bad HTTP method" : "Método HTTP incorreto",
     "Bad credentials" : "Credenciais inválidas",
     "Invalid credentials" : "Credenciais inválidas",
+    "Invalid response" : "Resposta inválida",
     "Login server error" : "Erro no servidor de login",
     "Connected accounts" : "Contas conectadas",
+    "Integration of Zimbra" : "Integração do Zimbra",
+    "You can get a Zimbra pre-auth key by running \"zmprov generateDomainPreAuthKey domain.com\"" : "Você pode obter uma chave de pré-autenticação do Zimbra executando \"zmprov generateDomainPreAuthKey domain.com\"",
+    "Error connecting to Zimbra:" : "Erro ao conectar ao Zimbra:",
     "Invalid access token" : "Token de acesso inválido",
+    "Invalid login/password" : "Login/senha inválido/a",
     "Failed to save Zimbra options" : "Falha ao salvar as opções do Zimbra",
     "Login" : "Iniciar sessão",
     "Password" : "Palavra-passe",
-    "No Zimbra upcoming events!" : "Não há eventos do Zimbra futuros!"
+    "Zimbra password" : "Senha para o Zimbra",
+    "Connect to Zimbra" : "Conectar ao Zimbra",
+    "Enable searching for emails" : "Ativar pesquisa de e-mails",
+    "Error connecting to Zimbra" : "Erro ao conectar ao Zimbra",
+    "No Zimbra upcoming events!" : "Não há eventos do Zimbra futuros!",
+    "Failed to get Zimbra upcoming events" : "Falha ao obter os próximos eventos do Zimbra"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
