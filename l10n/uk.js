@@ -10,7 +10,7 @@ OC.L10N.register(
     "Bad credentials" : "Погані облікові дані",
     "Zimbra request error" : "Помилка запиту до Zimbra",
     "Zimbra request failure" : "Помилка запиту на Zimbra",
-    "Invalid credentials" : "Невірні облікові дані",
+    "Invalid credentials" : "Недійсні облікові дані",
     "Invalid response" : "Неправильна відповідь",
     "Login server error" : "Помилка сервера входу в систему",
     "Login error" : "Помилка входу в систему",
