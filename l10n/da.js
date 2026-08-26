@@ -5,6 +5,7 @@ OC.L10N.register(
     "Bad credentials" : "Forkerte legitimationsoplysninger",
     "Invalid credentials" : "Ugyldige legitimationsoplysninger",
     "Connected accounts" : "Forbundne konti",
+    "Invalid access token" : "Ugyldig adgang token",
     "Login" : "Log på",
     "Password" : "Adgangskode",
     "Connected as {user}" : "Forbundet som {user}"
