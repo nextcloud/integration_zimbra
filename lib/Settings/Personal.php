@@ -39,7 +39,11 @@ class Personal implements ISettings {
 		if ($value === '') {
 			return $value;
 		}
-		return $this->crypto->decrypt($value);
+		try {
+			return $this->crypto->decrypt($value);
+		} catch (\Exception $e) {
+			return '';
+		}
 	}
 
 	/**
@@ -54,7 +58,6 @@ class Personal implements ISettings {
 		$zimbraUserDisplayName = $this->config->getUserValue($this->userId, Application::APP_ID, 'user_displayname');
 		$adminUrl = $this->config->getAppValue(Application::APP_ID, 'admin_instance_url');
 		$url = $this->config->getUserValue($this->userId, Application::APP_ID, 'url', $adminUrl) ?: $adminUrl;
-
 		$userConfig = [
 			'token' => $token ? 'dummyTokenContent' : '',
 			'url' => $url,
