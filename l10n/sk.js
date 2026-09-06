@@ -3,8 +3,11 @@ OC.L10N.register(
     {
     "Bad HTTP method" : "Zlá metóda HTTP",
     "Bad credentials" : "Nesprávne prihlasovacie údaje",
+    "Invalid credentials" : "Neplatné prihlasovacie údaje",
+    "Invalid response" : "Neplatná odpoveď",
     "Connected accounts" : "Prepojené účty",
     "Invalid access token" : "Nesprávny prístupový token",
+    "Invalid login/password" : "Neplatné prihlasovacie meno alebo heslo",
     "Login" : "Prihlásiť sa",
     "Password" : "Heslo",
     "Connected as {user}" : "Pripojený ako {user}"
