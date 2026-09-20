@@ -79,6 +79,7 @@ class ConfigController extends Controller {
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'token');
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'login');
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'password');
+				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'app_password');
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, '2fa_expires_at');
 				$this->config->deleteUserValue($this->userId, Application::APP_ID, 'zimbra_version');
 				$result['user_id'] = '';
@@ -102,7 +103,7 @@ class ConfigController extends Controller {
 	 */
 	public function setConfig(array $values): DataResponse {
 		foreach ($values as $key => $value) {
-			if (in_array($key, ['url', 'login', 'password', 'token'])) {
+			if (in_array($key, ['url', 'login', 'password', 'app_password', 'token'])) {
 				throw new OCSForbiddenException();
 			}
 
