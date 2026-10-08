@@ -33,7 +33,7 @@ OC.L10N.register(
     "Zimbra options saved" : "Indstillingerne for Zimbra er gemt",
     "Failed to save Zimbra options" : "Indstillingerne for Zimbra kunne ikke gemmes",
     "Zimbra instance address" : "Adresse på Zimbra-instansen",
-    "Login" : "Log på",
+    "Login" : "Log ind",
     "Zimbra login" : "Login til Zimbra",
     "Password" : "Adgangskode",
     "Zimbra password" : "Adgangskode til Zimbra",
