@@ -5,6 +5,7 @@ OC.L10N.register(
     "Bad credentials" : "Credențiale greșite",
     "Connected accounts" : "Conturile conectate",
     "Login" : "Autentificare",
-    "Password" : "Parolă"
+    "Password" : "Parolă",
+    "Connected as {user}" : "Conectat ca {user}"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");
