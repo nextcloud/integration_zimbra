@@ -71,7 +71,30 @@ class ZimbraAPIService {
 		if ($value === '') {
 			return $value;
 		}
-		return $this->crypto->decrypt($value);
+		try {
+			return $this->crypto->decrypt($value);
+		} catch (\Exception $e) {
+			$this->logger->warning('Zimbra: could not decrypt credential, resetting.', [
+				'app' => Application::APP_ID,
+				'exception' => $e,
+			]);
+			return '';
+		}
+	}
+
+	/**
+	 * Returns the app-specific password if one is stored, otherwise falls back
+	 * to the regular password. App-specific passwords bypass Zimbra 2FA.
+	 */
+	private function getEffectivePassword(string $userId): string {
+		$encAppPw = $this->config->getUserValue($userId, Application::APP_ID, 'app_password', '');
+		if ($encAppPw !== '') {
+			$appPw = $this->decryptIfNotEmpty($encAppPw);
+			if ($appPw !== '') {
+				return $appPw;
+			}
+		}
+		return $this->decryptIfNotEmpty($this->config->getUserValue($userId, Application::APP_ID, 'password', ''));
 	}
 
 	public function isUserConnected(string $userId): bool {
@@ -81,7 +104,7 @@ class ZimbraAPIService {
 		$userName = $this->config->getUserValue($userId, Application::APP_ID, 'user_name');
 		$token = $this->decryptIfNotEmpty($this->config->getUserValue($userId, Application::APP_ID, 'token'));
 		$login = $this->config->getUserValue($userId, Application::APP_ID, 'login');
-		$password = $this->decryptIfNotEmpty($this->config->getUserValue($userId, Application::APP_ID, 'password'));
+		$password = $this->getEffectivePassword($userId);
 		return $url && $userName && $token && $login && $password;
 	}
 
@@ -507,7 +530,7 @@ class ZimbraAPIService {
 			if ($nowTs > $tokenExpiresAt - 60) {
 				// try login with credentials
 				$login = $this->config->getUserValue($userId, Application::APP_ID, 'login');
-				$password = $this->decryptIfNotEmpty($this->config->getUserValue($userId, Application::APP_ID, 'password'));
+				$password = $this->getEffectivePassword($userId);
 				$loginResult = $this->login($userId, $login, $password);
 				if (isset($loginResult['error'])) {
 					$this->logger->debug('Zimbra token refresh error : ' . $loginResult['error'], ['app' => Application::APP_ID]);
