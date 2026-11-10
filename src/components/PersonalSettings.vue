@@ -39,15 +39,15 @@
 					:placeholder="t('integration_zimbra', 'Zimbra password')"
 					@keyup.enter="onConnectClick">
 			</div>
-			<div v-show="showLoginPassword && twoFactorRequired" class="field">
+			<div v-show="showLoginPassword" class="field">
 				<label for="zimbra-2fa">
 					<LockIcon :size="20" class="icon" />
-					{{ t('integration_zimbra', 'Second authentication factor') }}
+					{{ t('integration_zimbra', 'Second authentication factor (OTP)') }}
 				</label>
 				<input id="zimbra-2fa"
 					v-model="twoFactorCode"
 					type="text"
-					:placeholder="t('integration_zimbra', '123456')"
+					:placeholder="t('integration_zimbra', '123456 (leave empty if 2FA is not enabled)')"
 					@keyup.enter="onConnectClick">
 			</div>
 			<NcButton v-if="!connected"
@@ -137,7 +137,6 @@ export default {
 			loading: false,
 			login: '',
 			password: '',
-			twoFactorRequired: false,
 			twoFactorCode: '',
 		}
 	},
@@ -213,16 +212,7 @@ export default {
 						showError(t('integration_zimbra', 'Invalid access token'))
 						this.state.token = ''
 					} else if (this.login && this.password && response.data.user_name === '') {
-						if (response.data.two_factor_required) {
-							this.twoFactorRequired = true
-							showError(t('integration_zimbra', 'Zimbra second factor is required'))
-						} else {
-							if (this.twoFactorRequired) {
-								showError(t('integration_zimbra', 'Invalid login/password or second factor'))
-							} else {
-								showError(t('integration_zimbra', 'Invalid login/password'))
-							}
-						}
+						showError(t('integration_zimbra', 'Invalid login/password or second factor'))
 					} else if (response.data.user_name) {
 						showSuccess(t('integration_zimbra', 'Successfully connected to Zimbra!'))
 						this.state.user_id = response.data.user_id
@@ -230,7 +220,6 @@ export default {
 						this.state.user_displayname = response.data.user_displayname
 						this.state.token = 'dumdum'
 						this.twoFactorCode = ''
-						this.twoFactorRequired = false
 					}
 				} else {
 					showSuccess(t('integration_zimbra', 'Zimbra options saved'))
