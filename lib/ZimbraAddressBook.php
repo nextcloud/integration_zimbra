@@ -57,7 +57,7 @@ class ZimbraAddressBook implements IAddressBook {
 		$this->userId = $userId;
 	}
 
-	public function getKey() {
+	public function getKey(): string {
 		return 'zimbraAddressBook';
 	}
 
